@@ -329,6 +329,30 @@ export default function filamentCalendar(config) {
             return ranges
         },
 
+        splitRangeExcludingMiddleDate(range, date) {
+            const start = range.start
+            const end = range.end
+
+            if (date <= start || date >= end) {
+                return []
+            }
+
+            const ranges = []
+            const dayBefore = addDays(date, -1)
+
+            if (dayBefore >= start) {
+                ranges.push({ start, end: dayBefore })
+            }
+
+            const dayAfter = addDays(date, 1)
+
+            if (dayAfter <= end) {
+                ranges.push({ start: dayAfter, end })
+            }
+
+            return ranges
+        },
+
         getPendingSelectionStart() {
             if (this.mode === 'multi-range' && this.pendingRange?.start && ! this.pendingRange?.end) {
                 return this.pendingRange.start
@@ -533,7 +557,20 @@ export default function filamentCalendar(config) {
                 const existingRangeIndex = this.findRangeIndexForDate(date)
 
                 if (existingRangeIndex >= 0) {
-                    this.state = this.getRanges().filter((_, index) => index !== existingRangeIndex)
+                    const range = this.getRanges()[existingRangeIndex]
+                    const role = this.getRangeRole(date)
+                    const otherRanges = this.getRanges().filter((_, index) => index !== existingRangeIndex)
+                    let replacementRanges = []
+
+                    if (role === 'middle') {
+                        replacementRanges = this.splitRangeExcludingMiddleDate(range, date)
+                    }
+
+                    this.state = [
+                        ...otherRanges,
+                        ...replacementRanges,
+                    ].sort((left, right) => left.start.localeCompare(right.start))
+
                     this.pendingRange = null
                     this.hoveredDate = null
 

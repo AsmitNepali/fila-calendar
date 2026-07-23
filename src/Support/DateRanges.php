@@ -161,6 +161,43 @@ class DateRanges
     }
 
     /**
+     * @return list<array{start: string, end: string}>
+     */
+    public static function splitExcludingMiddleDate(string $start, string $end, string $date): array
+    {
+        if ($start > $end) {
+            [$start, $end] = [$end, $start];
+        }
+
+        if ($date <= $start || $date >= $end) {
+            return [];
+        }
+
+        $ranges = [];
+        $exclude = Carbon::parse($date)->startOfDay();
+        $startDate = Carbon::parse($start)->startOfDay();
+        $endDate = Carbon::parse($end)->startOfDay();
+        $dayBefore = $exclude->copy()->subDay();
+        $dayAfter = $exclude->copy()->addDay();
+
+        if ($dayBefore->gte($startDate)) {
+            $ranges[] = [
+                'start' => $startDate->toDateString(),
+                'end' => $dayBefore->toDateString(),
+            ];
+        }
+
+        if ($dayAfter->lte($endDate)) {
+            $ranges[] = [
+                'start' => $dayAfter->toDateString(),
+                'end' => $endDate->toDateString(),
+            ];
+        }
+
+        return $ranges;
+    }
+
+    /**
      * @param  array<int, mixed>  $state
      */
     public static function isRangeList(array $state): bool
