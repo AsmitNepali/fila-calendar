@@ -134,14 +134,18 @@
                         </template>
                     </div>
 
-                    <div class="fi-filament-calendar__days">
+                    <div
+                        class="fi-filament-calendar__days"
+                        x-on:mouseleave="clearHoveredDate()"
+                    >
                         <template x-for="day in calendarDays(monthDate)" :key="day.date">
                             <button
                                 type="button"
-                                x-bind:class="dayClasses(day)"
+                                x-bind:class="dayClasses(day, hoverRevision)"
                                 x-bind:disabled="isButtonDisabled(day.date)"
                                 x-bind:aria-disabled="isInteractionBlocked(day.date)"
                                 x-on:click="selectDate(day.date)"
+                                x-on:mouseenter="setHoveredDate(day.date)"
                             >
                                 <span class="fi-calendar-day__number" x-text="day.day"></span>
                             </button>

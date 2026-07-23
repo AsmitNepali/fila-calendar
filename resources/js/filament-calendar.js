@@ -81,13 +81,21 @@ export default function filamentCalendar(config) {
         return toDateString(date)
     }
 
+    const resolveInitialState = () => {
+        if (config.readOnly && config.mode === 'multi-range') {
+            return Array.isArray(config.state) ? config.state : []
+        }
+
+        return config.state
+    }
+
     const anchor = resolveInitialAnchorDate()
 
     return {
-        state: config.mode === 'multi-range'
-            ? (Array.isArray(config.state) ? config.state : [])
-            : config.state,
+        state: resolveInitialState(),
         pendingRange: null,
+        hoveredDate: null,
+        hoverRevision: 0,
         mode: config.mode ?? 'single',
         minDate: config.minDate ?? null,
         maxDate: config.maxDate ?? null,
@@ -101,6 +109,16 @@ export default function filamentCalendar(config) {
         disabled: config.disabled ?? false,
         viewStart: new Date(anchor.getFullYear(), anchor.getMonth(), 1),
         weekdayLabels: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+
+        init() {
+            this.$watch('hoveredDate', () => {
+                this.hoverRevision += 1
+            })
+
+            this.$watch('pendingRange', () => {
+                this.hoverRevision += 1
+            })
+        },
 
         monthsToRender() {
             return Array.from({ length: this.months }, (_, index) => addMonths(this.viewStart, index))
@@ -204,7 +222,15 @@ export default function filamentCalendar(config) {
                     return null
                 }
 
-                const end = this.state.end ?? this.state.start
+                if (! this.state?.end) {
+                    if (date === this.state.start) {
+                        return 'pending-start'
+                    }
+
+                    return null
+                }
+
+                const end = this.state.end
 
                 if (date === this.state.start && date === end) {
                     return 'start-end'
@@ -303,6 +329,70 @@ export default function filamentCalendar(config) {
             return ranges
         },
 
+        getPendingSelectionStart() {
+            if (this.mode === 'multi-range' && this.pendingRange?.start && ! this.pendingRange?.end) {
+                return this.pendingRange.start
+            }
+
+            if (this.mode === 'range' && this.state?.start && ! this.state?.end) {
+                return this.state.start
+            }
+
+            return null
+        },
+
+        setHoveredDate(date) {
+            if (this.readOnly || this.disabled || this.isInteractionBlocked(date)) {
+                return
+            }
+
+            if (this.getPendingSelectionStart() !== null) {
+                this.hoveredDate = date
+            }
+        },
+
+        clearHoveredDate() {
+            this.hoveredDate = null
+        },
+
+        getPendingHoverSegments() {
+            const start = this.getPendingSelectionStart()
+
+            if (start === null || this.hoveredDate === null) {
+                return []
+            }
+
+            return this.splitRangeAroundBlockedDates(start, this.hoveredDate)
+        },
+
+        getPendingHoverRole(date) {
+            const start = this.getPendingSelectionStart()
+
+            if (start === null || this.hoveredDate === null || this.isInteractionBlocked(date)) {
+                return null
+            }
+
+            if (this.getRangeRole(date) !== null) {
+                return null
+            }
+
+            for (const segment of this.getPendingHoverSegments()) {
+                if (date === segment.start && date === segment.end) {
+                    return 'preview'
+                }
+
+                if (date === segment.start || date === segment.end) {
+                    return 'preview'
+                }
+
+                if (date > segment.start && date < segment.end) {
+                    return 'preview'
+                }
+            }
+
+            return null
+        },
+
         isSelected(date) {
             if (! this.state) {
                 return false
@@ -323,7 +413,9 @@ export default function filamentCalendar(config) {
             return false
         },
 
-        dayClasses(day) {
+        dayClasses(day, revision = 0) {
+            void revision
+
             const classes = ['fi-calendar-day']
 
             if (! day.currentMonth) {
@@ -355,7 +447,7 @@ export default function filamentCalendar(config) {
             const role = this.getRangeRole(day.date)
 
             if (role === 'pending-start') {
-                classes.push('fi-calendar-day--range-start', 'fi-calendar-day--range-pending')
+                classes.push('fi-calendar-day--range-start', 'fi-calendar-day--range-pending', 'fi-calendar-day--selected')
             }
 
             if (role === 'start' || role === 'start-end') {
@@ -368,6 +460,12 @@ export default function filamentCalendar(config) {
 
             if (role === 'middle') {
                 classes.push('fi-calendar-day--in-range')
+            }
+
+            const hoverRole = this.getPendingHoverRole(day.date)
+
+            if (hoverRole === 'preview') {
+                classes.push('fi-calendar-day--in-range-hover')
             }
 
             if (this.mode === 'single' && this.state === day.date) {
@@ -411,6 +509,7 @@ export default function filamentCalendar(config) {
             if (this.mode === 'range') {
                 if (! this.state?.start || (this.state.start && this.state.end)) {
                     this.state = { start: date, end: null }
+                    this.hoveredDate = null
 
                     return
                 }
@@ -425,6 +524,7 @@ export default function filamentCalendar(config) {
                 const segments = this.splitRangeAroundBlockedDates(start, end)
 
                 this.state = segments[0] ?? null
+                this.hoveredDate = null
 
                 return
             }
@@ -435,12 +535,14 @@ export default function filamentCalendar(config) {
                 if (existingRangeIndex >= 0) {
                     this.state = this.getRanges().filter((_, index) => index !== existingRangeIndex)
                     this.pendingRange = null
+                    this.hoveredDate = null
 
                     return
                 }
 
                 if (! this.pendingRange?.start || this.pendingRange.end) {
                     this.pendingRange = { start: date, end: null }
+                    this.hoveredDate = null
 
                     return
                 }
@@ -456,6 +558,7 @@ export default function filamentCalendar(config) {
 
                 if (newRanges.length === 0) {
                     this.pendingRange = null
+                    this.hoveredDate = null
 
                     return
                 }
@@ -466,6 +569,7 @@ export default function filamentCalendar(config) {
                 ].sort((left, right) => left.start.localeCompare(right.start))
 
                 this.pendingRange = null
+                this.hoveredDate = null
             }
         },
 
