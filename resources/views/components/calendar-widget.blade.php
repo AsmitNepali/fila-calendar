@@ -1,9 +1,13 @@
 @php
     use Filament\Support\Facades\FilamentAsset;
 
+    $calendarLocale = $getResolvedLocale();
+
     $calendarMonthOptions = collect(range(0, 11))->map(fn (int $month): array => [
         'value' => $month,
-        'label' => \Illuminate\Support\Carbon::create(2000, $month + 1, 1)->format('F'),
+        'label' => \Illuminate\Support\Carbon::create(2000, $month + 1, 1)
+            ->locale($calendarLocale)
+            ->translatedFormat('F'),
     ]);
 
     $calendarYearRange = range(((int) now()->format('Y')) - 50, ((int) now()->format('Y')) + 50);
@@ -41,6 +45,7 @@
         withToday: @js($getWithToday()),
         disabled: @js($disabled),
         initialDate: @js($initialDate),
+        locale: @js($getLocale()),
     })"
 >
     <div class="fi-filament-calendar__toolbar">

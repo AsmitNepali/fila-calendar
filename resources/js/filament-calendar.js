@@ -81,6 +81,20 @@ export default function filamentCalendar(config) {
         return toDateString(date)
     }
 
+    const buildWeekdayLabels = (locale) => {
+        try {
+            const formatter = new Intl.DateTimeFormat(locale || undefined, { weekday: 'short' })
+
+            return Array.from({ length: 7 }, (_, dayIndex) => {
+                const date = new Date(2024, 0, 7 + dayIndex)
+
+                return formatter.format(date)
+            })
+        } catch {
+            return ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+        }
+    }
+
     const resolveInitialState = () => {
         if (config.readOnly && config.mode === 'multi-range') {
             return Array.isArray(config.state) ? config.state : []
@@ -107,8 +121,9 @@ export default function filamentCalendar(config) {
         withToday: config.withToday ?? false,
         readOnly: config.readOnly ?? false,
         disabled: config.disabled ?? false,
+        locale: config.locale ?? null,
         viewStart: new Date(anchor.getFullYear(), anchor.getMonth(), 1),
-        weekdayLabels: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+        weekdayLabels: buildWeekdayLabels(config.locale),
 
         init() {
             this.$watch('hoveredDate', () => {
@@ -125,7 +140,7 @@ export default function filamentCalendar(config) {
         },
 
         monthLabel(date) {
-            return date.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
+            return date.toLocaleDateString(this.locale || undefined, { month: 'long', year: 'numeric' })
         },
 
         toolbarLabel() {

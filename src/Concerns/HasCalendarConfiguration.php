@@ -2,6 +2,7 @@
 
 namespace Asmitnepali\FilamentCalendar\Concerns;
 
+use Asmitnepali\FilamentCalendar\Support\Locale;
 use Asmitnepali\FilamentCalendar\Support\Weekday;
 use Closure;
 
@@ -32,6 +33,27 @@ trait HasCalendarConfiguration
 
     /** @var list<string|int>|Closure */
     protected array|Closure $weekEndDays = [];
+
+    protected string|Closure|null $locale = null;
+
+    public function locale(string|Closure|null $locale): static
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
+    public function getLocale(): ?string
+    {
+        $locale = $this->evaluate($this->locale);
+
+        return Locale::normalize(is_string($locale) ? $locale : null);
+    }
+
+    public function getResolvedLocale(): string
+    {
+        return Locale::resolve($this->getLocale());
+    }
 
     public function minDate(string|Closure $date): static
     {
