@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core'
+import { withBase } from 'ufo'
 
 const route = useRoute()
 const toast = useToast()
 const { copy, copied } = useClipboard()
-const site = useSiteConfig()
+const { app: { baseURL } } = useRuntimeConfig()
+const requestURL = useRequestURL()
 
-const mdPath = computed(() => `${site.url}/raw${route.path}.md`)
+const pagePath = computed(() => route.path.replace(/\/$/, '') || '/')
+const rawMarkdownPath = computed(() => withBase(`/raw${pagePath.value}.md`, baseURL))
+const mdPath = computed(() => new URL(rawMarkdownPath.value, requestURL.origin).href)
+const aiPrompt = computed(() => `Read ${mdPath.value} so I can ask questions about it.`)
 
-const items = [
+const items = computed(() => [
   {
     label: 'Copy Markdown link',
     icon: 'i-lucide-link',
@@ -23,25 +28,48 @@ const items = [
   {
     label: 'View as Markdown',
     icon: 'i-simple-icons:markdown',
-    target: '_blank',
-    to: `/raw${route.path}.md`
+    onSelect() {
+      window.open(rawMarkdownPath.value, '_blank', 'noopener,noreferrer')
+    }
   },
   {
     label: 'Open in ChatGPT',
     icon: 'i-simple-icons:openai',
-    target: '_blank',
-    to: `https://chatgpt.com/?hints=search&q=${encodeURIComponent(`Read ${mdPath.value} so I can ask questions about it.`)}`
+    onSelect() {
+      window.open(
+        `https://chatgpt.com/?hints=search&q=${encodeURIComponent(aiPrompt.value)}`,
+        '_blank',
+        'noopener,noreferrer'
+      )
+    }
   },
   {
     label: 'Open in Claude',
     icon: 'i-simple-icons:anthropic',
-    target: '_blank',
-    to: `https://claude.ai/new?q=${encodeURIComponent(`Read ${mdPath.value} so I can ask questions about it.`)}`
+    onSelect() {
+      window.open(
+        `https://claude.ai/new?q=${encodeURIComponent(aiPrompt.value)}`,
+        '_blank',
+        'noopener,noreferrer'
+      )
+    }
   }
-]
+])
 
 async function copyPage() {
-  copy(await $fetch<string>(`/raw${route.path}.md`))
+  try {
+    copy(await $fetch<string>(rawMarkdownPath.value))
+    toast.add({
+      title: 'Copied to clipboard',
+      icon: 'i-lucide-check-circle'
+    })
+  } catch {
+    toast.add({
+      title: 'Failed to copy page',
+      color: 'error',
+      icon: 'i-lucide-circle-x'
+    })
+  }
 }
 </script>
 

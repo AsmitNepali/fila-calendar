@@ -17,6 +17,11 @@ export default defineNuxtConfig({
     baseURL: process.env.NUXT_APP_BASE_URL || '/'
   },
 
+  site: {
+    url: 'https://asmitnepali.github.io',
+    name: 'Fila Calendar'
+  },
+
   css: ['~/assets/css/main.css'],
 
   content: {
