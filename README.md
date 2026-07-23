@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="art/logo.png" alt="Fila Calendar" width="128" height="128">
+  <img src="art/cover.png" alt="Fila Calendar" width="640">
 </p>
 
 # Filament Calendar
@@ -32,6 +32,18 @@ CalendarInput::make('availabilities')
     ->locale('ja');
 ```
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Security
+
+See [SECURITY.md](SECURITY.md).
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
-MIT
+This project is licensed under the [MIT License](LICENSE.md).
