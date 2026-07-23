@@ -1,6 +1,6 @@
 <?php
 
-namespace Asmitnepali\FilamentCalendar\Support;
+namespace Asmit\FilaCalendar\Support;
 
 /**
  * @internal

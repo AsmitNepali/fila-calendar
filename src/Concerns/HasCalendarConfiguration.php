@@ -1,16 +1,17 @@
 <?php
 
-namespace Asmitnepali\FilamentCalendar\Concerns;
+namespace Asmit\FilaCalendar\Concerns;
 
-use Asmitnepali\FilamentCalendar\Support\Locale;
-use Asmitnepali\FilamentCalendar\Support\Weekday;
+use Asmit\FilaCalendar\Support\CalendarMode;
+use Asmit\FilaCalendar\Support\Locale;
+use Asmit\FilaCalendar\Support\Weekday;
 use Closure;
 
 trait HasCalendarConfiguration
 {
     protected int $months = 1;
 
-    protected ?string $mode = null;
+    protected ?CalendarMode $mode = null;
 
     protected ?string $minDate = null;
 
@@ -90,7 +91,7 @@ trait HasCalendarConfiguration
         return $this;
     }
 
-    public function mode(string $mode): static
+    public function mode(CalendarMode $mode): static
     {
         $this->mode = $mode;
 
@@ -113,7 +114,7 @@ trait HasCalendarConfiguration
 
     public function isMultiple(): bool
     {
-        if ($this->getMode() === 'multiple') {
+        if ($this->getMode() === CalendarMode::Multiple) {
             return true;
         }
 
@@ -153,12 +154,12 @@ trait HasCalendarConfiguration
         return $this->months;
     }
 
-    public function getMode(): ?string
+    public function getMode(): ?CalendarMode
     {
         return $this->mode;
     }
 
-    public function getResolvedMode(): ?string
+    public function getResolvedMode(): CalendarMode
     {
         $mode = $this->getMode();
 
@@ -167,10 +168,10 @@ trait HasCalendarConfiguration
         }
 
         if ($this->isMultiple()) {
-            return 'multiple';
+            return CalendarMode::Multiple;
         }
 
-        return 'single';
+        return CalendarMode::Single;
     }
 
     public function isScrollable(): bool

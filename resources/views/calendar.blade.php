@@ -3,7 +3,7 @@
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @include('filament-calendar::components.calendar-widget', [
+    @include('fila-calendar::components.calendar-widget', [
         'readOnly' => false,
         'disabled' => $isDisabled(),
         'hydratedState' => null,

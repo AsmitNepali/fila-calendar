@@ -1,39 +1,91 @@
-const baseURL = process.env.NUXT_APP_BASE_URL || '/'
-
+// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-    modules: ['@nuxt/content'],
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/image',
+    '@nuxt/ui',
+    '@nuxt/content',
+    'nuxt-og-image',
+    'nuxt-llms'
+  ],
 
-    app: {
-        baseURL,
-        head: {
-            title: 'Filament Calendar',
-            meta: [
-                {
-                    name: 'description',
-                    content: 'A Flux-style inline calendar field for Filament — no Flux dependency.',
-                },
-            ],
-            link: [
-                {
-                    rel: 'icon',
-                    href: `${baseURL}favicon.svg`,
-                },
-            ],
-        },
-    },
+  devtools: {
+    enabled: true
+  },
 
-    content: {
+  app: {
+    baseURL: process.env.NUXT_APP_BASE_URL || '/'
+  },
+
+  css: ['~/assets/css/main.css'],
+
+  content: {
+    build: {
+      markdown: {
         highlight: {
-            theme: 'github-dark',
+          langs: ['php']
         },
+        toc: {
+          searchDepth: 1
+        }
+      }
     },
+    experimental: {
+      sqliteConnector: 'native'
+    }
+  },
 
-    nitro: {
-        prerender: {
-            crawlLinks: true,
-            routes: ['/'],
-        },
+  experimental: {
+    asyncContext: true
+  },
+
+  compatibilityDate: '2026-06-30',
+
+  nitro: {
+    prerender: {
+      routes: [
+        '/'
+      ],
+      crawlLinks: true
+    }
+  },
+
+  eslint: {
+    config: {
+      stylistic: {
+        commaDangle: 'never',
+        braceStyle: '1tbs'
+      }
+    }
+  },
+
+  llms: {
+    domain: 'https://asmitnepali.github.io/fila-calendar/',
+    title: 'Filament Calendar',
+    description: 'Documentation for asmit/fila-calendar — a polished inline calendar field for Filament.',
+    full: {
+      title: 'Filament Calendar - Full Documentation',
+      description: 'Complete documentation for the Filament Calendar package.'
     },
+    sections: [
+      {
+        title: 'Getting Started',
+        contentCollection: 'docs',
+        contentFilters: [
+          { field: 'path', operator: 'LIKE', value: '/getting-started%' }
+        ]
+      },
+      {
+        title: 'Guide',
+        contentCollection: 'docs',
+        contentFilters: [
+          { field: 'path', operator: 'LIKE', value: '/guide%' }
+        ]
+      }
+    ]
+  },
 
-    compatibilityDate: '2024-11-01',
+  ogImage: {
+    zeroRuntime: true
+  }
 })

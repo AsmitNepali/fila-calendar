@@ -1,6 +1,6 @@
 {
-    "name": "asmitnepali/filament-calendar",
-    "description": "A Flux-style inline calendar form field for Filament — no Flux dependency.",
+    "name": "asmit/fila-calendar",
+    "description": "A polished inline calendar form field for Filament.",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -19,13 +19,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Asmitnepali\\FilamentCalendar\\": "src/"
+            "Asmit\\FilaCalendar\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Asmitnepali\\FilamentCalendar\\FilamentCalendarServiceProvider"
+                "Asmit\\FilaCalendar\\FilaCalendarServiceProvider"
             ]
         }
     },

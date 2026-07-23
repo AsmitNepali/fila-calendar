@@ -1,13 +1,13 @@
-.fi-filament-calendar {
+.fi-fila-calendar {
     width: 100%;
     min-width: 0;
 }
 
-.fi-filament-calendar--readonly .fi-calendar-day {
+.fi-fila-calendar--readonly .fi-calendar-day {
     cursor: default;
 }
 
-.fi-filament-calendar__toolbar {
+.fi-fila-calendar__toolbar {
     display: grid;
     grid-template-columns: 2.5rem 1fr auto;
     align-items: center;
@@ -15,37 +15,37 @@
     margin-bottom: 0.75rem;
 }
 
-.fi-filament-calendar__toolbar-center {
+.fi-fila-calendar__toolbar-center {
     display: flex;
     justify-content: center;
     min-width: 0;
 }
 
-.fi-filament-calendar__toolbar-label {
+.fi-fila-calendar__toolbar-label {
     font-size: 0.875rem;
     font-weight: 600;
     color: rgb(24 24 27);
     text-align: center;
 }
 
-.dark .fi-filament-calendar__toolbar-label {
+.dark .fi-fila-calendar__toolbar-label {
     color: rgb(244 244 245);
 }
 
-.fi-filament-calendar__toolbar-actions {
+.fi-fila-calendar__toolbar-actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 0.5rem;
 }
 
-.fi-filament-calendar__viewport {
+.fi-fila-calendar__viewport {
     width: 100%;
     min-width: 0;
     min-height: 20rem;
 }
 
-.fi-filament-calendar--scrollable .fi-filament-calendar__viewport {
+.fi-fila-calendar--scrollable .fi-fila-calendar__viewport {
     max-height: min(70vh, 52rem);
     overflow-y: auto;
     overflow-x: hidden;
@@ -53,7 +53,7 @@
     padding-inline: 0.25rem;
 }
 
-.fi-filament-calendar__months {
+.fi-fila-calendar__months {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -62,13 +62,13 @@
 }
 
 @media (min-width: 640px) {
-    .fi-filament-calendar__months {
+    .fi-fila-calendar__months {
         display: grid;
         grid-template-columns: repeat(var(--fi-calendar-columns, 2), minmax(0, 1fr));
     }
 }
 
-.fi-filament-calendar__month {
+.fi-fila-calendar__month {
     min-width: 0;
     width: 100%;
     border-radius: 0.75rem;
@@ -78,25 +78,25 @@
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
 }
 
-.dark .fi-filament-calendar__month {
+.dark .fi-fila-calendar__month {
     border-color: rgb(39 39 42);
     background: rgb(24 24 27);
     box-shadow: none;
 }
 
-.fi-filament-calendar__header {
+.fi-fila-calendar__header {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 0.75rem;
 }
 
-.fi-filament-calendar__heading {
+.fi-fila-calendar__heading {
     min-width: 0;
     text-align: center;
 }
 
-.fi-filament-calendar__label {
+.fi-fila-calendar__label {
     display: block;
     font-size: 0.875rem;
     font-weight: 600;
@@ -104,11 +104,11 @@
     color: rgb(24 24 27);
 }
 
-.dark .fi-filament-calendar__label {
+.dark .fi-fila-calendar__label {
     color: rgb(244 244 245);
 }
 
-.fi-filament-calendar__selects {
+.fi-fila-calendar__selects {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -116,20 +116,20 @@
     width: 100%;
 }
 
-.fi-filament-calendar__select-field {
+.fi-fila-calendar__select-field {
     min-width: 9rem;
 }
 
-.fi-filament-calendar__select-field--year {
+.fi-fila-calendar__select-field--year {
     min-width: 6.5rem;
 }
 
-.fi-filament-calendar__select-field .fi-select-input {
+.fi-fila-calendar__select-field .fi-select-input {
     font-size: 0.875rem;
     font-weight: 500;
 }
 
-.fi-filament-calendar__nav {
+.fi-fila-calendar__nav {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -142,36 +142,36 @@
     cursor: pointer;
 }
 
-.fi-filament-calendar__nav:hover:not(:disabled) {
+.fi-fila-calendar__nav:hover:not(:disabled) {
     background: rgb(244 244 245);
 }
 
-.dark .fi-filament-calendar__nav {
+.dark .fi-fila-calendar__nav {
     color: rgb(212 212 216);
 }
 
-.dark .fi-filament-calendar__nav:hover:not(:disabled) {
+.dark .fi-fila-calendar__nav:hover:not(:disabled) {
     background: rgb(39 39 42);
 }
 
-.fi-filament-calendar__nav:disabled {
+.fi-fila-calendar__nav:disabled {
     opacity: 0.4;
     cursor: not-allowed;
 }
 
-.fi-filament-calendar__nav-icon {
+.fi-fila-calendar__nav-icon {
     width: 1rem;
     height: 1rem;
 }
 
-.fi-filament-calendar__weekdays,
-.fi-filament-calendar__days {
+.fi-fila-calendar__weekdays,
+.fi-fila-calendar__days {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 0.25rem;
 }
 
-.fi-filament-calendar__weekday {
+.fi-fila-calendar__weekday {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -183,7 +183,7 @@
     color: rgb(113 113 122);
 }
 
-.fi-filament-calendar__days {
+.fi-fila-calendar__days {
     margin-top: 0.25rem;
 }
 
@@ -206,7 +206,7 @@
     transition: background-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
 }
 
-.fi-filament-calendar--xs .fi-calendar-day {
+.fi-fila-calendar--xs .fi-calendar-day {
     min-height: 1.75rem;
     font-size: 0.75rem;
 }
@@ -383,6 +383,6 @@
     background: rgb(39 39 42);
 }
 
-.fi-modal .fi-filament-calendar__months {
+.fi-modal .fi-fila-calendar__months {
     gap: 0.75rem;
 }

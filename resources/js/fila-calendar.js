@@ -1,4 +1,4 @@
-export default function filamentCalendar(config) {
+export default function filaCalendar(config) {
     const parseDate = (value) => {
         if (value instanceof Date) {
             return new Date(value.getFullYear(), value.getMonth(), value.getDate())

@@ -1,16 +1,16 @@
 <?php
 
-namespace Asmitnepali\FilamentCalendar\Forms\Components;
+namespace Asmit\FilaCalendar\Forms\Components;
 
-use Asmitnepali\FilamentCalendar\Concerns\HasCalendarConfiguration;
-use Asmitnepali\FilamentCalendar\Support\CalendarState;
+use Asmit\FilaCalendar\Concerns\HasCalendarConfiguration;
+use Asmit\FilaCalendar\Support\CalendarState;
 use Filament\Forms\Components\Field;
 
 class CalendarInput extends Field
 {
     use HasCalendarConfiguration;
 
-    protected string $view = 'filament-calendar::calendar';
+    protected string $view = 'fila-calendar::calendar';
 
     protected function setUp(): void
     {

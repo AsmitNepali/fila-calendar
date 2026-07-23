@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@source "../../../content/**/*";
+
+@theme static {
+  --container-8xl: 90rem;
+  --font-sans: 'Public Sans', sans-serif;
+
+  --color-green-50: #EFFDF5;
+  --color-green-100: #D9FBE8;
+  --color-green-200: #B3F5D1;
+  --color-green-300: #75EDAE;
+  --color-green-400: #00DC82;
+  --color-green-500: #00C16A;
+  --color-green-600: #00A155;
+  --color-green-700: #007F45;
+  --color-green-800: #016538;
+  --color-green-900: #0A5331;
+  --color-green-950: #052E16;
+}
+
+:root {
+  --ui-container: var(--container-8xl);
+}
+
+.landing-page {
+  background: #fafafa;
+}
+
+.dark .landing-page {
+  background: #09090b;
+}
+
+/* Glide.ai-style glass frame — https://github.com/prismicio-community/nuxt-starter-prismic-glideai */
+.glass-container {
+  position: relative;
+}
+
+.glass-container::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  z-index: -10;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(229 231 235 / 0.45);
+  background: rgb(255 255 255 / 0.35);
+  backdrop-filter: blur(12px);
+}
+
+.dark .glass-container::before {
+  border-color: rgb(243 244 246 / 0.2);
+  background: rgb(229 231 235 / 0.1);
+}

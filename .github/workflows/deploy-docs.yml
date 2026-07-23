@@ -39,7 +39,7 @@ jobs:
       - name: Generate static site
         working-directory: docs
         env:
-          NUXT_APP_BASE_URL: /filament-calendar/
+          NUXT_APP_BASE_URL: /fila-calendar/
         run: npm run build
 
       - name: Upload artifact

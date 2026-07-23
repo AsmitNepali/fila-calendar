@@ -1,6 +1,6 @@
 <?php
 
-namespace Asmitnepali\FilamentCalendar\Support;
+namespace Asmit\FilaCalendar\Support;
 
 use Carbon\Carbon;
 
@@ -14,21 +14,21 @@ class CalendarState
      *
      * @return array{start: string, end: string}|list<array{start: string, end: string}>|list<string>|string|null
      */
-    public static function hydrate(mixed $state, ?string $mode, bool $multiple = false): mixed
+    public static function hydrate(mixed $state, ?CalendarMode $mode, bool $multiple = false): mixed
     {
         if ($state === null || $state === '' || $state === []) {
             return self::emptyState($mode, $multiple);
         }
 
-        if ($mode === 'range') {
+        if ($mode === CalendarMode::Range) {
             return self::hydrateRange($state);
         }
 
-        if ($mode === 'multi-range') {
+        if ($mode === CalendarMode::MultiRange) {
             return self::hydrateMultiRange($state);
         }
 
-        if ($mode === 'single' || ($mode === null && ! $multiple)) {
+        if ($mode === CalendarMode::Single || ($mode === null && ! $multiple)) {
             if (is_array($state)) {
                 return null;
             }
@@ -36,7 +36,7 @@ class CalendarState
             return Carbon::parse((string) $state)->toDateString();
         }
 
-        if ($mode === 'multiple' || $multiple) {
+        if ($mode === CalendarMode::Multiple || $multiple) {
             if (! is_array($state) || DateRanges::isRangeList($state)) {
                 return [];
             }
@@ -58,21 +58,21 @@ class CalendarState
      *
      * @return array{start: string, end: string}|list<array{start: string, end: string}>|list<string>|string|null
      */
-    public static function dehydrate(mixed $state, ?string $mode, bool $multiple = false): mixed
+    public static function dehydrate(mixed $state, ?CalendarMode $mode, bool $multiple = false): mixed
     {
         if ($state === null || $state === '' || $state === []) {
             return self::emptyState($mode, $multiple);
         }
 
-        if ($mode === 'range') {
+        if ($mode === CalendarMode::Range) {
             return self::dehydrateRange($state);
         }
 
-        if ($mode === 'multi-range') {
+        if ($mode === CalendarMode::MultiRange) {
             return self::dehydrateMultiRange($state);
         }
 
-        if ($mode === 'single' || ($mode === null && ! $multiple)) {
+        if ($mode === CalendarMode::Single || ($mode === null && ! $multiple)) {
             if (is_array($state)) {
                 return null;
             }
@@ -80,7 +80,7 @@ class CalendarState
             return Carbon::parse((string) $state)->toDateString();
         }
 
-        if ($mode === 'multiple' || $multiple) {
+        if ($mode === CalendarMode::Multiple || $multiple) {
             if (! is_array($state)) {
                 return [];
             }
@@ -210,11 +210,11 @@ class CalendarState
     /**
      * @return array{start: string, end: string}|list<array{start: string, end: string}>|list<string>|string|null
      */
-    protected static function emptyState(?string $mode, bool $multiple): mixed
+    protected static function emptyState(?CalendarMode $mode, bool $multiple): mixed
     {
         return match ($mode) {
-            'range' => null,
-            'multi-range', 'multiple' => [],
+            CalendarMode::Range => null,
+            CalendarMode::MultiRange, CalendarMode::Multiple => [],
             default => $multiple ? [] : null,
         };
     }

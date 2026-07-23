@@ -1,26 +1,31 @@
+<p align="center">
+  <img src="art/logo.png" alt="Fila Calendar" width="128" height="128">
+</p>
+
 # Filament Calendar
 
-A Flux-style inline calendar field for [Filament](https://filamentphp.com) — no Flux dependency.
+A polished inline calendar field for [Filament](https://filamentphp.com).
 
 ## Documentation
 
 - Local docs: `cd docs && npm install && npm run dev`
-- GitHub Pages: https://asmitnepali.github.io/filament-calendar/
+- GitHub Pages: https://asmitnepali.github.io/fila-calendar/
 
 ## Install
 
 ```bash
-composer require asmitnepali/filament-calendar
+composer require asmit/fila-calendar
 php artisan filament:assets
 ```
 
 ## Quick example
 
 ```php
-use Asmitnepali\FilamentCalendar\Forms\Components\CalendarInput;
+use Asmit\FilaCalendar\Forms\Components\CalendarInput;
+use Asmit\FilaCalendar\Support\CalendarMode;
 
 CalendarInput::make('availabilities')
-    ->mode('multi-range')
+    ->mode(CalendarMode::MultiRange)
     ->months(12)
     ->calendarColumns(4)
     ->withToday()

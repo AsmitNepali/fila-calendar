@@ -10,7 +10,7 @@
 @endphp
 
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
-    @include('filament-calendar::components.calendar-widget', [
+    @include('fila-calendar::components.calendar-widget', [
         'readOnly' => true,
         'disabled' => false,
         'hydratedState' => $hydratedState,

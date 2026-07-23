@@ -15,18 +15,18 @@
 
 <div
     @class([
-        'fi-filament-calendar',
-        'fi-filament-calendar--scrollable' => $isScrollable(),
-        'fi-filament-calendar--readonly' => $readOnly,
-        "fi-filament-calendar--{$getSize()}" => filled($getSize()),
+        'fi-fila-calendar',
+        'fi-fila-calendar--scrollable' => $isScrollable(),
+        'fi-fila-calendar--readonly' => $readOnly,
+        "fi-fila-calendar--{$getSize()}" => filled($getSize()),
     ])
     style="--fi-calendar-columns: {{ $getCalendarColumns() }}"
     @unless ($readOnly)
         wire:ignore
     @endunless
     x-load
-    x-load-src="{{ FilamentAsset::getAlpineComponentSrc('filament-calendar', package: 'asmitnepali/filament-calendar') }}"
-    x-data="filamentCalendar({
+    x-load-src="{{ FilamentAsset::getAlpineComponentSrc('fila-calendar', package: 'asmit/fila-calendar') }}"
+    x-data="filaCalendar({
         @if ($readOnly)
             state: @js($hydratedState),
             readOnly: true,
@@ -34,7 +34,7 @@
             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
             readOnly: false,
         @endif
-        mode: @js($getResolvedMode()),
+        mode: @js($getResolvedMode()->value),
         minDate: @js($getMinDate()),
         maxDate: @js($getMaxDate()),
         unavailableDates: @js($getUnavailableDates()),
@@ -48,23 +48,23 @@
         locale: @js($getLocale()),
     })"
 >
-    <div class="fi-filament-calendar__toolbar">
+    <div class="fi-fila-calendar__toolbar">
         <button
             type="button"
-            class="fi-filament-calendar__nav"
+            class="fi-fila-calendar__nav"
             x-on:click="previousMonth()"
             x-bind:disabled="disabled"
-            aria-label="{{ __('filament-calendar::calendar.previous_month') }}"
+            aria-label="{{ __('fila-calendar::calendar.previous_month') }}"
         >
-            <x-filament::icon icon="heroicon-m-chevron-left" class="fi-filament-calendar__nav-icon" />
+            <x-filament::icon icon="heroicon-m-chevron-left" class="fi-fila-calendar__nav-icon" />
         </button>
 
-        <div class="fi-filament-calendar__toolbar-center">
+        <div class="fi-fila-calendar__toolbar-center">
             <template x-if="selectableHeader">
-                <div class="fi-filament-calendar__selects">
+                <div class="fi-fila-calendar__selects">
                     <x-filament::input.wrapper
                         alpine-disabled="disabled"
-                        class="fi-filament-calendar__select-field"
+                        class="fi-fila-calendar__select-field"
                     >
                         <x-filament::input.select
                             x-bind:value="viewStart.getMonth()"
@@ -81,7 +81,7 @@
 
                     <x-filament::input.wrapper
                         alpine-disabled="disabled"
-                        class="fi-filament-calendar__select-field fi-filament-calendar__select-field--year"
+                        class="fi-fila-calendar__select-field fi-fila-calendar__select-field--year"
                     >
                         <x-filament::input.select
                             x-bind:value="viewStart.getFullYear()"
@@ -97,19 +97,19 @@
             </template>
 
             <template x-if="! selectableHeader">
-                <span class="fi-filament-calendar__toolbar-label" x-text="toolbarLabel()"></span>
+                <span class="fi-fila-calendar__toolbar-label" x-text="toolbarLabel()"></span>
             </template>
         </div>
 
-        <div class="fi-filament-calendar__toolbar-actions">
+        <div class="fi-fila-calendar__toolbar-actions">
             <button
                 type="button"
-                class="fi-filament-calendar__nav"
+                class="fi-fila-calendar__nav"
                 x-on:click="nextMonth()"
                 x-bind:disabled="disabled"
-                aria-label="{{ __('filament-calendar::calendar.next_month') }}"
+                aria-label="{{ __('fila-calendar::calendar.next_month') }}"
             >
-                <x-filament::icon icon="heroicon-m-chevron-right" class="fi-filament-calendar__nav-icon" />
+                <x-filament::icon icon="heroicon-m-chevron-right" class="fi-fila-calendar__nav-icon" />
             </button>
 
             <x-filament::button
@@ -120,27 +120,27 @@
                 x-on:click="goToToday()"
                 x-bind:disabled="disabled"
             >
-                {{ __('filament-calendar::calendar.today') }}
+                {{ __('fila-calendar::calendar.today') }}
             </x-filament::button>
         </div>
     </div>
 
-    <div class="fi-filament-calendar__viewport">
-        <div class="fi-filament-calendar__months">
+    <div class="fi-fila-calendar__viewport">
+        <div class="fi-fila-calendar__months">
             <template x-for="(monthDate, monthIndex) in monthsToRender()" :key="monthIndex">
-                <section class="fi-filament-calendar__month">
-                    <header class="fi-filament-calendar__header">
-                        <span class="fi-filament-calendar__label" x-text="monthLabel(monthDate)"></span>
+                <section class="fi-fila-calendar__month">
+                    <header class="fi-fila-calendar__header">
+                        <span class="fi-fila-calendar__label" x-text="monthLabel(monthDate)"></span>
                     </header>
 
-                    <div class="fi-filament-calendar__weekdays">
+                    <div class="fi-fila-calendar__weekdays">
                         <template x-for="weekday in weekdayLabels" :key="weekday">
-                            <span class="fi-filament-calendar__weekday" x-text="weekday"></span>
+                            <span class="fi-fila-calendar__weekday" x-text="weekday"></span>
                         </template>
                     </div>
 
                     <div
-                        class="fi-filament-calendar__days"
+                        class="fi-fila-calendar__days"
                         x-on:mouseleave="clearHoveredDate()"
                     >
                         <template x-for="day in calendarDays(monthDate)" :key="day.date">

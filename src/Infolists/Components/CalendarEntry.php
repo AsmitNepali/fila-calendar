@@ -1,16 +1,16 @@
 <?php
 
-namespace Asmitnepali\FilamentCalendar\Infolists\Components;
+namespace Asmit\FilaCalendar\Infolists\Components;
 
-use Asmitnepali\FilamentCalendar\Concerns\HasCalendarConfiguration;
-use Asmitnepali\FilamentCalendar\Support\CalendarState;
+use Asmit\FilaCalendar\Concerns\HasCalendarConfiguration;
+use Asmit\FilaCalendar\Support\CalendarState;
 use Filament\Infolists\Components\Entry;
 
 class CalendarEntry extends Entry
 {
     use HasCalendarConfiguration;
 
-    protected string $view = 'filament-calendar::infolist-calendar';
+    protected string $view = 'fila-calendar::infolist-calendar';
 
     protected function setUp(): void
     {

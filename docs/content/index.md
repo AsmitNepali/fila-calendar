@@ -1,42 +1,98 @@
 ---
-title: Introduction
-description: A Flux-style inline calendar field for Filament — no Flux dependency.
-navigation:
-  order: 1
+seo:
+  title: Filament Calendar
+  description: A polished inline calendar field for Filament forms and infolists.
 ---
 
-# Filament Calendar
+::u-page-section
+#title
+Everything you need for date selection
 
-`asmitnepali/filament-calendar` is a standalone Filament calendar field inspired by Flux Calendar. It works with Filament forms and infolists, supports multiple selection modes, and ships its own Alpine.js UI and styles.
+#features
+  :::u-page-feature
+  ---
+  icon: i-lucide-calendar-range
+  ---
+  #title
+  Four selection modes
 
-## Features
+  #description
+  Single dates, multiple dates, one range, or many ranges — all with consistent state hydration and dehydration.
+  :::
 
-- Single, range, multiple, and multi-range selection
-- Form field (`CalendarInput`) and read-only infolist entry (`CalendarEntry`)
-- Multi-month grid with responsive columns
-- Unavailable dates, weekend blocking, and min/max bounds
-- Range hover preview while selecting
-- Middle-day deselect splits a range instead of clearing it
-- Locale support via `->locale('ja')`
-- No Flux dependency
+  :::u-page-feature
+  ---
+  icon: i-lucide-mouse-pointer-click
+  ---
+  #title
+  Range hover preview
 
-## Requirements
+  #description
+  After picking a start date, hover toward the end date to preview in-between days before the second click.
+  :::
 
-- PHP 8.2+
-- Laravel 11 or 12
-- Filament 4 or 5
+  :::u-page-feature
+  ---
+  icon: i-lucide-scissors
+  ---
+  #title
+  Smart range splitting
 
-## Quick start
+  #description
+  Click a middle day in a multi-range to split it into two ranges instead of clearing the whole span.
+  :::
 
-```php
-use Asmitnepali\FilamentCalendar\Forms\Components\CalendarInput;
+  :::u-page-feature
+  ---
+  icon: i-lucide-languages
+  ---
+  #title
+  Locale support
 
-CalendarInput::make('available_dates')
-    ->mode('multi-range')
-    ->months(3)
-    ->calendarColumns(3)
-    ->withToday()
-    ->minDate(now()->toDateString());
-```
+  #description
+  Localize month headers, weekday labels, and dropdowns with `->locale('ja')` or browser defaults.
+  :::
 
-Browse the sidebar for installation, usage, modes, configuration, and localization.
+  :::u-page-feature
+  ---
+  icon: i-lucide-layout-grid
+  ---
+  #title
+  Multi-month grids
+
+  #description
+  Render up to twelve months with responsive columns, optional scrolling, and selectable headers.
+  :::
+
+  :::u-page-feature
+  ---
+  icon: i-lucide-eye
+  ---
+  #title
+  Form & infolist
+
+  #description
+  `CalendarInput` for editable forms and `CalendarEntry` for read-only infolist display with the same API.
+  :::
+::
+
+::u-page-section{class="bg-neutral-50 dark:bg-gradient-to-b dark:from-neutral-950 dark:to-neutral-900"}
+  :::u-page-c-t-a
+  ---
+  links:
+    - label: Installation
+      to: '/getting-started/installation'
+      trailingIcon: i-lucide-arrow-right
+    - label: View on GitHub
+      to: 'https://github.com/AsmitNepali/fila-calendar'
+      target: _blank
+      variant: subtle
+      icon: i-simple-icons-github
+  title: Ready to add a calendar to your Filament app?
+  description: Install with Composer, register assets, and drop a CalendarInput into your next form.
+  class: dark:bg-neutral-950
+  ---
+
+  :stars-bg
+  :::
+::
