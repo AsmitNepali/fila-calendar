@@ -2,6 +2,7 @@
 import { withBase } from 'ufo'
 
 const { seo } = useAppConfig()
+const { app: { baseURL } } = useRuntimeConfig()
 
 const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
 const { data: files } = useLazyAsyncData('search', () => queryCollectionSearchSections('docs'), {
@@ -13,7 +14,7 @@ useHead({
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
   ],
   link: [
-    { rel: 'icon', href: withBase('/favicon.png'), type: 'image/png' }
+    { rel: 'icon', href: withBase('/favicon.png', baseURL), type: 'image/png' }
   ],
   htmlAttrs: {
     lang: 'en'

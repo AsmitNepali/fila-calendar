@@ -5,8 +5,9 @@ import { withBase } from 'ufo'
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
 const { header, seo } = useAppConfig()
+const { app: { baseURL } } = useRuntimeConfig()
 
-const logoSrc = computed(() => withBase(header?.logo?.light ?? header?.logo?.dark ?? '/logo.png'))
+const logoSrc = computed(() => withBase(header?.logo?.light ?? header?.logo?.dark ?? '/logo.png', baseURL))
 </script>
 
 <template>
