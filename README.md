@@ -47,7 +47,7 @@ Add a calendar field to a Filament form:
 use Asmit\FilaCalendar\Forms\Components\CalendarInput;
 use Asmit\FilaCalendar\Support\CalendarMode;
 
-CalendarInput::make('availabilities')
+CalendarInput::make('booking')
     ->mode(CalendarMode::MultiRange)
     ->months(12)
     ->calendarColumns(4)
@@ -61,7 +61,7 @@ Render saved dates as a read-only infolist entry:
 use Asmit\FilaCalendar\Infolists\Components\CalendarEntry;
 use Asmit\FilaCalendar\Support\CalendarMode;
 
-CalendarEntry::make('availabilities')
+CalendarEntry::make('booking')
     ->mode(CalendarMode::MultiRange)
     ->months(3)
     ->calendarColumns(3);
