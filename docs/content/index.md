@@ -1,6 +1,6 @@
 ---
 seo:
-  title: Filament Calendar
+  title: Fila Calendar
   description: A polished inline calendar field for Filament forms and infolists.
 ---
 

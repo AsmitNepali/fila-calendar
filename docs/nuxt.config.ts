@@ -61,11 +61,11 @@ export default defineNuxtConfig({
 
   llms: {
     domain: 'https://asmitnepali.github.io/fila-calendar/',
-    title: 'Filament Calendar',
+    title: 'Fila Calendar',
     description: 'Documentation for asmit/fila-calendar — a polished inline calendar field for Filament.',
     full: {
-      title: 'Filament Calendar - Full Documentation',
-      description: 'Complete documentation for the Filament Calendar package.'
+      title: 'Fila Calendar - Full Documentation',
+      description: 'Complete documentation for the Fila Calendar package.'
     },
     sections: [
       {

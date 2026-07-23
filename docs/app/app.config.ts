@@ -12,7 +12,7 @@ export default defineAppConfig({
     }
   },
   seo: {
-    siteName: 'Filament Calendar'
+    siteName: 'Fila Calendar'
   },
   header: {
     title: '',
@@ -32,7 +32,7 @@ export default defineAppConfig({
     }]
   },
   footer: {
-    credits: `Filament Calendar • © ${new Date().getFullYear()}`,
+    credits: `Fila Calendar • © ${new Date().getFullYear()}`,
     colorMode: false,
     links: [{
       icon: 'i-simple-icons-github',
