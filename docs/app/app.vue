@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { withBase } from 'ufo'
+
 const { seo } = useAppConfig()
 
 const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
@@ -11,7 +13,7 @@ useHead({
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
   ],
   link: [
-    { rel: 'icon', href: '/favicon.png', type: 'image/png' }
+    { rel: 'icon', href: withBase('/favicon.png'), type: 'image/png' }
   ],
   htmlAttrs: {
     lang: 'en'

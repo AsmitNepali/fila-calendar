@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
+import { withBase } from 'ufo'
 
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
 const { header, seo } = useAppConfig()
+
+const logoSrc = computed(() => withBase(header?.logo?.light ?? header?.logo?.dark ?? '/logo.png'))
 </script>
 
 <template>
@@ -22,12 +25,11 @@ const { header, seo } = useAppConfig()
       #title
     >
       <div class="flex items-center gap-2.5">
-        <UColorModeImage
+        <img
           v-if="header?.logo?.dark || header?.logo?.light"
-          :light="header?.logo?.light!"
-          :dark="header?.logo?.dark!"
+          :src="logoSrc"
           :alt="header?.logo?.alt"
-          class="size-8 shrink-0"
+          class="size-8 shrink-0 object-contain"
         />
 
         <span
