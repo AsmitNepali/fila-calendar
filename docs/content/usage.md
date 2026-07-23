@@ -1,0 +1,60 @@
+---
+title: Usage
+description: Form fields, infolist entries, and state formats.
+navigation:
+  order: 3
+---
+
+# Usage
+
+## Form field
+
+```php
+use Asmitnepali\FilamentCalendar\Forms\Components\CalendarInput;
+
+CalendarInput::make('dates')
+    ->label('Dates')
+    ->mode('range')
+    ->required();
+```
+
+## Read-only infolist entry
+
+```php
+use Asmitnepali\FilamentCalendar\Infolists\Components\CalendarEntry;
+
+CalendarEntry::make('dates')
+    ->label('Saved dates')
+    ->mode('multi-range')
+    ->state(fn (): array => [
+        ['start' => '2026-07-01', 'end' => '2026-07-10'],
+    ]);
+```
+
+## State formats
+
+| Mode | Stored state |
+| --- | --- |
+| `single` | `"2026-07-10"` |
+| `multiple` | `["2026-07-02", "2026-07-10"]` |
+| `range` | `{ "start": "2026-07-02", "end": "2026-07-10" }` |
+| `multi-range` | `[{ "start": "2026-07-02", "end": "2026-07-04" }, ...]` |
+
+`CalendarInput` hydrates and dehydrates these formats automatically through `CalendarState`.
+
+## Interaction model
+
+- Selection logic runs in Alpine.js on the client.
+- Form fields bind with Livewire `$entangle`.
+- No server round-trip is required for each click.
+- Save/submit reads the final entangled state.
+
+## Multi-range deselect behavior
+
+| Click | Result |
+| --- | --- |
+| Start or end day | Removes the whole range |
+| Middle day | Splits into two ranges around the removed day |
+| Single-day range | Removes that day |
+
+Example: range `1–10`, click day `5` → `1–4` and `6–10`.
