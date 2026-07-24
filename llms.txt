@@ -1,0 +1,20 @@
+# Fila Calendar
+
+> Documentation for asmit/fila-calendar — a polished inline calendar field for Filament.
+
+## Documentation Sets
+
+- [Fila Calendar - Full Documentation](https://asmitnepali.github.io/fila-calendar//llms-full.txt): Complete documentation for the Fila Calendar package.
+
+## Getting Started
+
+- [Introduction](https://asmitnepali.github.io/fila-calendar/raw/getting-started/introduction.md): A polished inline calendar field for Filament forms and infolists.
+- [Installation](https://asmitnepali.github.io/fila-calendar/raw/getting-started/installation.md): Install the package in a Laravel Filament application.
+- [Development](https://asmitnepali.github.io/fila-calendar/raw/getting-started/development.md): Symlink the package locally while developing.
+- [Usage](https://asmitnepali.github.io/fila-calendar/raw/getting-started/usage.md): Form fields, infolist entries, and state formats.
+
+## Guide
+
+- [Modes](https://asmitnepali.github.io/fila-calendar/raw/guide/modes.md): Single, multiple, range, and multi-range selection modes.
+- [Configuration](https://asmitnepali.github.io/fila-calendar/raw/guide/configuration.md): Calendar layout, bounds, and disabled dates.
+- [Localization](https://asmitnepali.github.io/fila-calendar/raw/guide/localization.md): Localize month names, weekdays, and dropdown labels.

@@ -1,0 +1,312 @@
+# Introduction
+
+`asmit/fila-calendar` is a standalone Filament calendar field for forms and infolists. It supports multiple selection modes and ships its own Alpine.js UI and styles.
+
+## Features
+
+- Single, range, multiple, and multi-range selection
+- Form field (`CalendarInput`) and read-only infolist entry (`CalendarEntry`)
+- Multi-month grid with responsive columns
+- Unavailable dates, weekend blocking, and min/max bounds
+- Range hover preview while selecting
+- Middle-day deselect splits a range instead of clearing it
+- Locale support via `->locale('ja')`
+- No external UI library required
+
+## Requirements
+
+- PHP 8.2+
+- Laravel 11 or 12
+- Filament 4 or 5
+
+## Quick start
+
+```php
+use Asmit\FilaCalendar\Forms\Components\CalendarInput;
+use Asmit\FilaCalendar\Support\CalendarMode;
+
+CalendarInput::make('available_dates')
+    ->mode(CalendarMode::MultiRange)
+    ->months(3)
+    ->calendarColumns(3)
+    ->withToday()
+    ->minDate(now()->toDateString());
+```
+
+Browse the sidebar for installation, development, usage, modes, configuration, and localization.
+
+
+# Installation
+
+Install the package with Composer:
+
+```bash
+composer require asmit/fila-calendar
+```
+
+## Publish assets
+
+Register the Alpine component and stylesheet with Filament:
+
+```bash
+php artisan filament:assets
+```
+
+## Theme CSS
+
+Import the package stylesheet into your Filament theme so Vite compiles the calendar styles:
+
+```css
+@import '../../vendor/asmit/fila-calendar/resources/css/fila-calendar.css';
+```
+
+Adjust the relative path for your project layout.
+
+## Auto-discovery
+
+The service provider is registered automatically. No manual provider setup is required.
+
+
+# Development
+
+Use a Composer path repository when you are developing the package inside a Laravel app.
+
+## Composer path repository
+
+Add the repository and require the package from your local path:
+
+```json
+{
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./packages/fila-calendar/"
+        }
+    ],
+    "require": {
+        "asmit/fila-calendar": "@dev"
+    }
+}
+```
+
+Then install or update:
+
+```bash
+composer update asmit/fila-calendar
+php artisan filament:assets
+```
+
+Composer symlinks the package into `vendor/asmit/fila-calendar`, so PHP changes are picked up immediately. Re-run `php artisan filament:assets` after changing JavaScript or CSS in the package.
+
+## Theme CSS
+
+When importing styles from the local package path instead of `vendor/`, use:
+
+```css
+@import "../../../../../packages/fila-calendar/resources/css/fila-calendar.css";
+```
+
+Adjust the relative path for your project layout.
+
+
+# Usage
+
+## Form field
+
+```php
+use Asmit\FilaCalendar\Forms\Components\CalendarInput;
+use Asmit\FilaCalendar\Support\CalendarMode;
+
+CalendarInput::make('dates')
+    ->label('Dates')
+    ->mode(CalendarMode::Range)
+    ->required();
+```
+
+## Read-only infolist entry
+
+```php
+use Asmit\FilaCalendar\Infolists\Components\CalendarEntry;
+use Asmit\FilaCalendar\Support\CalendarMode;
+
+CalendarEntry::make('dates')
+    ->label('Saved dates')
+    ->mode(CalendarMode::MultiRange)
+    ->state(fn (): array => [
+        ['start' => '2026-07-01', 'end' => '2026-07-10'],
+    ]);
+```
+
+## State formats
+
+| Mode          | Stored state                                            |
+| ------------- | ------------------------------------------------------- |
+| `single`      | `"2026-07-10"`                                          |
+| `multiple`    | `["2026-07-02", "2026-07-10"]`                          |
+| `range`       | `{ "start": "2026-07-02", "end": "2026-07-10" }`        |
+| `multi-range` | `[{ "start": "2026-07-02", "end": "2026-07-04" }, ...]` |
+
+`CalendarInput` hydrates and dehydrates these formats automatically through `CalendarState`.
+
+## Interaction model
+
+- Selection logic runs in Alpine.js on the client.
+- Form fields bind with Livewire `$entangle`.
+- No server round-trip is required for each click.
+- Save/submit reads the final entangled state.
+
+## Multi-range deselect behavior
+
+| Click            | Result                                        |
+| ---------------- | --------------------------------------------- |
+| Start or end day | Removes the whole range                       |
+| Middle day       | Splits into two ranges around the removed day |
+| Single-day range | Removes that day                              |
+
+Example: range `1–10`, click day `5` → `1–4` and `6–10`.
+
+
+# Modes
+
+Use `Asmit\FilaCalendar\Support\CalendarMode` for type-safe mode selection.
+
+## Single
+
+```php
+use Asmit\FilaCalendar\Support\CalendarMode;
+
+CalendarInput::make('date')
+    ->mode(CalendarMode::Single);
+```
+
+State: `"2026-07-10"`
+
+## Multiple
+
+```php
+CalendarInput::make('dates')
+    ->mode(CalendarMode::Multiple);
+```
+
+State: `["2026-07-02", "2026-07-10", "2026-07-15"]`
+
+## Range
+
+```php
+CalendarInput::make('range')
+    ->mode(CalendarMode::Range);
+```
+
+Click a start date, then an end date. Blocked dates inside the span are skipped automatically.
+
+State: `{ "start": "2026-07-02", "end": "2026-07-10" }`
+
+## Multi-range
+
+```php
+CalendarInput::make('ranges')
+    ->mode(CalendarMode::MultiRange);
+```
+
+Click start, then end to add a range. Repeat to add more ranges. Click an existing range's start/end to remove it, or a middle day to split it.
+
+State:
+
+```php
+[
+    ['start' => '2026-07-02', 'end' => '2026-07-04'],
+    ['start' => '2026-07-10', 'end' => '2026-07-12'],
+]
+```
+
+## Hover preview
+
+In `range` and `multi-range` modes, after choosing a start date, hovering toward the end date previews the in-between days with a soft highlight before the second click.
+
+
+# Configuration
+
+All options are available on both `CalendarInput` and `CalendarEntry`.
+
+```php
+use Asmit\FilaCalendar\Forms\Components\CalendarInput;
+use Asmit\FilaCalendar\Support\CalendarMode;
+
+CalendarInput::make('dates')
+    ->mode(CalendarMode::MultiRange)
+    ->months(12)
+    ->calendarColumns(4)
+    ->size('xs')
+    ->scrollable(false)
+    ->selectableHeader()
+    ->withToday()
+    ->minDate(now()->toDateString())
+    ->maxDate(now()->addYear()->toDateString())
+    ->unavailableDates(['2026-07-15', '2026-07-20'])
+    ->weekEndDays(['sat', 'sun'])
+    ->locale('ja');
+```
+
+## Options
+
+| Method                    | Description                                                    |
+| ------------------------- | -------------------------------------------------------------- |
+| `mode()`                  | `CalendarMode::Single`, `Multiple`, `Range`, or `MultiRange`   |
+| `months()`                | Number of months to render (1–12)                              |
+| `calendarColumns()`       | Grid columns on wide screens                                   |
+| `size()`                  | Size variant, e.g. `xs`                                        |
+| `scrollable()`            | Scroll the month grid inside a viewport                        |
+| `selectableHeader()`      | Month/year dropdowns in the toolbar                            |
+| `withToday()`             | Show a Today button                                            |
+| `minDate()` / `maxDate()` | Bounds as `Y-m-d` strings                                      |
+| `unavailableDates()`      | Dates that cannot be selected                                  |
+| `weekEndDays()`           | Weekdays treated as blocked (`0`–`6`, names, or `sun`/`mon`/…) |
+| `locale()`                | Locale for month and weekday labels                            |
+
+## Unavailable vs weekend
+
+- `unavailableDates()` marks specific dates with a strikethrough style.
+- `weekEndDays()` blocks recurring weekdays with a muted style.
+
+Both are skipped when building ranges and hover previews.
+
+
+# Localization
+
+Set a locale on the field:
+
+```php
+CalendarInput::make('dates')
+    ->locale('jp')
+    ->months(3);
+```
+
+## Supported aliases
+
+| Input   | Resolved |
+| ------- | -------- |
+| `jp`    | `ja`     |
+| `ja_JP` | `ja-jp`  |
+
+Standard BCP 47 tags such as `fr`, `de`, and `en-US` also work.
+
+## What is localized
+
+- Month headers in each calendar card
+- Weekday row labels
+- Month names in the month/year dropdown when `selectableHeader()` is enabled
+
+## Defaults
+
+- If `->locale()` is omitted, JavaScript labels use the browser locale.
+- The month dropdown falls back to the Laravel app locale.
+
+## Today button
+
+Toolbar strings such as **Today** come from `resources/lang/{locale}/calendar.php`. Publish or extend those translations in your app for full UI localization.
+
+```bash
+php artisan vendor:publish --tag=fila-calendar-translations
+```
+
+If that tag is not published yet, copy the package language files into your app `lang/` directory.

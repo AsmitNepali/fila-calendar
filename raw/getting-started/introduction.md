@@ -1,0 +1,38 @@
+# Introduction
+
+> A polished inline calendar field for Filament forms and infolists.
+
+`asmit/fila-calendar` is a standalone Filament calendar field for forms and infolists. It supports multiple selection modes and ships its own Alpine.js UI and styles.
+
+## Features
+
+- Single, range, multiple, and multi-range selection
+- Form field (`CalendarInput`) and read-only infolist entry (`CalendarEntry`)
+- Multi-month grid with responsive columns
+- Unavailable dates, weekend blocking, and min/max bounds
+- Range hover preview while selecting
+- Middle-day deselect splits a range instead of clearing it
+- Locale support via `->locale('ja')`
+- No external UI library required
+
+## Requirements
+
+- PHP 8.2+
+- Laravel 11 or 12
+- Filament 4 or 5
+
+## Quick start
+
+```php
+use Asmit\FilaCalendar\Forms\Components\CalendarInput;
+use Asmit\FilaCalendar\Support\CalendarMode;
+
+CalendarInput::make('available_dates')
+    ->mode(CalendarMode::MultiRange)
+    ->months(3)
+    ->calendarColumns(3)
+    ->withToday()
+    ->minDate(now()->toDateString());
+```
+
+Browse the sidebar for installation, development, usage, modes, configuration, and localization.

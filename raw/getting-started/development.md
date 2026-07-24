@@ -1,0 +1,42 @@
+# Development
+
+> Symlink the package locally while developing.
+
+Use a Composer path repository when you are developing the package inside a Laravel app.
+
+## Composer path repository
+
+Add the repository and require the package from your local path:
+
+```json
+{
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./packages/fila-calendar/"
+        }
+    ],
+    "require": {
+        "asmit/fila-calendar": "@dev"
+    }
+}
+```
+
+Then install or update:
+
+```bash
+composer update asmit/fila-calendar
+php artisan filament:assets
+```
+
+Composer symlinks the package into `vendor/asmit/fila-calendar`, so PHP changes are picked up immediately. Re-run `php artisan filament:assets` after changing JavaScript or CSS in the package.
+
+## Theme CSS
+
+When importing styles from the local package path instead of `vendor/`, use:
+
+```css
+@import "../../../../../packages/fila-calendar/resources/css/fila-calendar.css";
+```
+
+Adjust the relative path for your project layout.

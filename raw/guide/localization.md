@@ -1,0 +1,80 @@
+# Localization
+
+> Localize month names, weekdays, and dropdown labels.
+
+Set a locale on the field:
+
+```php
+CalendarInput::make('dates')
+    ->locale('jp')
+    ->months(3);
+```
+
+## Supported aliases
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Input
+    </th>
+    
+    <th>
+      Resolved
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        jp
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        ja
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        ja_JP
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        ja-jp
+      </code>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+Standard BCP 47 tags such as `fr`, `de`, and `en-US` also work.
+
+## What is localized
+
+- Month headers in each calendar card
+- Weekday row labels
+- Month names in the month/year dropdown when `selectableHeader()` is enabled
+
+## Defaults
+
+- If `->locale()` is omitted, JavaScript labels use the browser locale.
+- The month dropdown falls back to the Laravel app locale.
+
+## Today button
+
+Toolbar strings such as **Today** come from `resources/lang/{locale}/calendar.php`. Publish or extend those translations in your app for full UI localization.
+
+```bash
+php artisan vendor:publish --tag=fila-calendar-translations
+```
+
+If that tag is not published yet, copy the package language files into your app `lang/` directory.

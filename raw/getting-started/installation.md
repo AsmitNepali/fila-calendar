@@ -1,0 +1,31 @@
+# Installation
+
+> Install the package in a Laravel Filament application.
+
+Install the package with Composer:
+
+```bash
+composer require asmit/fila-calendar
+```
+
+## Publish assets
+
+Register the Alpine component and stylesheet with Filament:
+
+```bash
+php artisan filament:assets
+```
+
+## Theme CSS
+
+Import the package stylesheet into your Filament theme so Vite compiles the calendar styles:
+
+```css
+@import '../../vendor/asmit/fila-calendar/resources/css/fila-calendar.css';
+```
+
+Adjust the relative path for your project layout.
+
+## Auto-discovery
+
+The service provider is registered automatically. No manual provider setup is required.
