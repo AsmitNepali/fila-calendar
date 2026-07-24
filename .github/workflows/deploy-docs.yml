@@ -1,52 +1,109 @@
-name: Deploy docs
+name: Deploy Docs
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - 'docs/**'
       - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
 
+# Prevent concurrent deploys to avoid push conflicts
+concurrency:
+  group: deploy-docs
+  cancel-in-progress: false
+
 permissions:
   contents: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Set version config
+        id: config
+        run: |
+          echo "dest_folder=." >> $GITHUB_OUTPUT
+          echo "base_url=/fila-calendar/" >> $GITHUB_OUTPUT
+          echo "is_latest=true" >> $GITHUB_OUTPUT
 
-      - name: Setup Node
+      - name: Checkout source branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '22'
           cache: npm
           cache-dependency-path: docs/package-lock.json
 
       - name: Install dependencies
-        working-directory: docs
+        working-directory: ./docs
         run: npm ci
 
-      - name: Generate static site
-        working-directory: docs
-        env:
-          NUXT_APP_BASE_URL: /fila-calendar/
+      - name: Build documentation
+        working-directory: ./docs
         run: npm run build
+        env:
+          NUXT_APP_BASE_URL: ${{ steps.config.outputs.base_url }}
+          NUXT_SITE_URL: https://asmitnepali.github.io
 
       - name: Add GitHub Pages SPA fallback
         run: cp docs/.output/public/index.html docs/.output/public/404.html
 
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/.output/public
-          publish_branch: gh-pages
-          force_orphan: true
+      - name: Deploy to gh-pages
+        run: |
+          DEST="${{ steps.config.outputs.dest_folder }}"
+          IS_LATEST="${{ steps.config.outputs.is_latest }}"
+
+          if [ "$IS_LATEST" == "true" ]; then
+            echo "Deploying latest version to root..."
+            cd gh-pages
+            PRESERVE=".nojekyll .git"
+            for item in *; do
+              if [ -e "$item" ]; then
+                SKIP=false
+                for keep in $PRESERVE; do
+                  if [ "$item" == "$keep" ]; then
+                    SKIP=true
+                    break
+                  fi
+                done
+                if [ "$SKIP" == "false" ]; then
+                  rm -rf "$item"
+                fi
+              fi
+            done
+            for item in .[!.]*; do
+              if [ -e "$item" ] && [ "$item" != ".git" ] && [ "$item" != ".nojekyll" ]; then
+                rm -rf "$item"
+              fi
+            done
+            cd ..
+            cp -r docs/.output/public/* gh-pages/
+          else
+            echo "Deploying to $DEST subfolder..."
+            rm -rf "gh-pages/$DEST"
+            cp -r docs/.output/public "gh-pages/$DEST"
+          fi
+
+      - name: Commit and push
+        working-directory: ./gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to deploy"
+          else
+            git commit -m "Deploy main docs"
+            git push
+          fi
