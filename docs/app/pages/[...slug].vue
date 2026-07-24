@@ -6,20 +6,27 @@ definePageMeta({
   layout: 'docs'
 })
 
-const route = useRoute()
+const path = useContentPath()
 const { toc } = useAppConfig()
 const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
 
-const { data: page } = await useAsyncData(route.path, () => queryCollection('docs').path(route.path).first())
+const pageKey = `docs-${path}`
+
+const { data: page } = await useAsyncData(pageKey, () => {
+  return queryCollection('docs').path(path).first()
+}, useContentPageCache(pageKey))
+
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const { data: surround } = await useAsyncData(`${route.path}-surround`, () => {
-  return queryCollectionItemSurroundings('docs', route.path, {
+const surroundKey = `${pageKey}-surround`
+
+const { data: surround } = await useAsyncData(surroundKey, () => {
+  return queryCollectionItemSurroundings('docs', path, {
     fields: ['description']
   })
-})
+}, useContentPageCache(surroundKey))
 
 const title = page.value.seo?.title || page.value.title
 const description = page.value.seo?.description || page.value.description
