@@ -25,8 +25,10 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   icon: {
+    mode: 'css',
     clientBundle: {
       scan: true,
+      sizeLimitKb: 512,
       icons: [
         'lucide:house',
         'lucide:code-2',
@@ -48,11 +50,18 @@ export default defineNuxtConfig({
         'lucide:circle-x',
         'lucide:star',
         'lucide:external-link',
+        'lucide:menu',
+        'lucide:search',
+        'lucide:moon',
+        'lucide:sun',
         'simple-icons:github',
         'simple-icons:markdown',
         'simple-icons:openai',
         'simple-icons:anthropic'
       ]
+    },
+    serverBundle: {
+      collections: ['lucide', 'simple-icons']
     }
   },
 

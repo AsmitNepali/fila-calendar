@@ -8,7 +8,7 @@ definePageMeta({
 
 const path = useContentPath()
 const { toc } = useAppConfig()
-const navigation = inject<ComputedRef<ContentNavigationItem[]>>('navigation')
+const navigation = inject<Ref<ContentNavigationItem[] | null>>('navigation')
 
 const pageKey = `docs-${path}`
 

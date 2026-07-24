@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import type { ContentNavigationItem } from '@nuxt/content'
 import { withBase } from 'ufo'
-
-const route = useRoute()
-const navigation = inject<ComputedRef<ContentNavigationItem[]>>('navigation')
 
 const { header, seo } = useAppConfig()
 const { app: { baseURL } } = useRuntimeConfig()
@@ -72,11 +68,7 @@ const logoSrc = computed(() => withBase(header?.logo?.light ?? header?.logo?.dar
     </template>
 
     <template #body>
-      <UContentNavigation
-        :key="route.path"
-        highlight
-        :navigation="navigation"
-      />
+      <DocsNavigation />
     </template>
   </UHeader>
 </template>

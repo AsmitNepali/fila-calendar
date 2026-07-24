@@ -15,8 +15,16 @@ export function useContentPath(): string {
   return withoutTrailingSlash(useRoute().path)
 }
 
-export async function useDocsNavigation(): Promise<ComputedRef<ContentNavigationItem[]>> {
-  const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'), useContentPageCache('navigation'))
+export async function useDocsNavigation(): Promise<Ref<ContentNavigationItem[]>> {
+  const navigation = useState<ContentNavigationItem[]>('docs-navigation', () => [])
 
-  return computed(() => navigation.value ?? [])
+  const { data } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'), useContentPageCache('navigation'))
+
+  watch(data, (value) => {
+    if (value?.length) {
+      navigation.value = value
+    }
+  }, { immediate: true })
+
+  return navigation
 }
