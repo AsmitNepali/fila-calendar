@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { ContentNavigationItem } from '@nuxt/content'
 
-const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
+const route = useRoute()
+const navigation = inject<ComputedRef<ContentNavigationItem[]>>('navigation')
 </script>
 
 <template>
@@ -10,6 +11,7 @@ const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
       <template #left>
         <UPageAside>
           <UContentNavigation
+            :key="route.path"
             highlight
             :navigation="navigation"
           />

@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { withBase } from 'ufo'
 
+const navigation = await useDocsNavigation()
 const { seo } = useAppConfig()
 const { app: { baseURL } } = useRuntimeConfig()
 
-const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'))
-const { data: files } = useLazyAsyncData('search', () => queryCollectionSearchSections('docs'), {
-  server: false
-})
+provide('navigation', navigation)
 
 useHead({
   meta: [
@@ -27,7 +25,9 @@ useSeoMeta({
   twitterCard: 'summary_large_image'
 })
 
-provide('navigation', navigation)
+const { data: files } = useLazyAsyncData('search', () => queryCollectionSearchSections('docs'), {
+  server: false
+})
 </script>
 
 <template>

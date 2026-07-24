@@ -24,6 +24,38 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  icon: {
+    clientBundle: {
+      scan: true,
+      icons: [
+        'lucide:house',
+        'lucide:code-2',
+        'lucide:download',
+        'lucide:code',
+        'lucide:calendar-range',
+        'lucide:calendar-days',
+        'lucide:mouse-pointer-click',
+        'lucide:scissors',
+        'lucide:languages',
+        'lucide:layout-grid',
+        'lucide:eye',
+        'lucide:settings',
+        'lucide:link',
+        'lucide:check-circle',
+        'lucide:copy',
+        'lucide:copy-check',
+        'lucide:chevron-down',
+        'lucide:circle-x',
+        'lucide:star',
+        'lucide:external-link',
+        'simple-icons:github',
+        'simple-icons:markdown',
+        'simple-icons:openai',
+        'simple-icons:anthropic'
+      ]
+    }
+  },
+
   content: {
     build: {
       markdown: {

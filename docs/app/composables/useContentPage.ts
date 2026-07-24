@@ -1,3 +1,4 @@
+import type { ContentNavigationItem } from '@nuxt/content'
 import { withoutTrailingSlash } from 'ufo'
 
 export function useContentPageCache<T>(key: string): {
@@ -12,4 +13,10 @@ export function useContentPageCache<T>(key: string): {
 
 export function useContentPath(): string {
   return withoutTrailingSlash(useRoute().path)
+}
+
+export async function useDocsNavigation(): Promise<ComputedRef<ContentNavigationItem[]>> {
+  const { data: navigation } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'), useContentPageCache('navigation'))
+
+  return computed(() => navigation.value ?? [])
 }

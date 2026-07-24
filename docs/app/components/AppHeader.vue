@@ -2,7 +2,8 @@
 import type { ContentNavigationItem } from '@nuxt/content'
 import { withBase } from 'ufo'
 
-const navigation = inject<Ref<ContentNavigationItem[]>>('navigation')
+const route = useRoute()
+const navigation = inject<ComputedRef<ContentNavigationItem[]>>('navigation')
 
 const { header, seo } = useAppConfig()
 const { app: { baseURL } } = useRuntimeConfig()
@@ -31,7 +32,7 @@ const logoSrc = computed(() => withBase(header?.logo?.light ?? header?.logo?.dar
           :src="logoSrc"
           :alt="header?.logo?.alt"
           class="size-8 shrink-0 object-contain"
-        />
+        >
 
         <span
           v-if="header?.title || seo?.siteName"
@@ -72,6 +73,7 @@ const logoSrc = computed(() => withBase(header?.logo?.light ?? header?.logo?.dar
 
     <template #body>
       <UContentNavigation
+        :key="route.path"
         highlight
         :navigation="navigation"
       />
