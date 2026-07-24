@@ -29,11 +29,7 @@ class CalendarState
         }
 
         if ($mode === CalendarMode::Single || ($mode === null && ! $multiple)) {
-            if (is_array($state)) {
-                return null;
-            }
-
-            return Carbon::parse((string) $state)->toDateString();
+            return self::hydrateSingle($state);
         }
 
         if ($mode === CalendarMode::Multiple || $multiple) {
@@ -73,11 +69,7 @@ class CalendarState
         }
 
         if ($mode === CalendarMode::Single || ($mode === null && ! $multiple)) {
-            if (is_array($state)) {
-                return null;
-            }
-
-            return Carbon::parse((string) $state)->toDateString();
+            return self::dehydrateSingle($state);
         }
 
         if ($mode === CalendarMode::Multiple || $multiple) {
@@ -95,6 +87,36 @@ class CalendarState
         }
 
         return null;
+    }
+
+    protected static function hydrateSingle(mixed $state): ?string
+    {
+        if (is_array($state)) {
+            $date = $state['start'] ?? $state[0] ?? null;
+
+            if (blank($date)) {
+                return null;
+            }
+
+            return Carbon::parse((string) $date)->toDateString();
+        }
+
+        return Carbon::parse((string) $state)->toDateString();
+    }
+
+    protected static function dehydrateSingle(mixed $state): ?string
+    {
+        if (is_array($state)) {
+            $date = $state['start'] ?? $state[0] ?? null;
+
+            if (blank($date)) {
+                return null;
+            }
+
+            return $date instanceof Carbon ? $date->toDateString() : (string) $date;
+        }
+
+        return $state instanceof Carbon ? $state->toDateString() : (string) $state;
     }
 
     /**

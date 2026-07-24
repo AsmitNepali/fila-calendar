@@ -39,6 +39,10 @@ Import the package stylesheet into your Filament theme:
 @import '../../vendor/asmit/fila-calendar/resources/css/fila-calendar.css';
 ```
 
+## Development
+
+If you symlink the package locally with a Composer path repository, see the [development guide](https://asmitnepali.github.io/fila-calendar/getting-started/development) for the path-repository setup and theme import path.
+
 ## Usage
 
 Add a calendar field to a Filament form:

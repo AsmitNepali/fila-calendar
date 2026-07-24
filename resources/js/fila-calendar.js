@@ -38,7 +38,13 @@ export default function filaCalendar(config) {
 
     const resolveInitialAnchorDate = () => {
         if (config.mode === 'single' && config.state) {
-            return parseDate(config.state)
+            if (typeof config.state === 'string') {
+                return parseDate(config.state)
+            }
+
+            if (typeof config.state === 'object' && config.state?.start) {
+                return parseDate(config.state.start)
+            }
         }
 
         if (config.mode === 'multiple' && Array.isArray(config.state) && config.state.length > 0) {
