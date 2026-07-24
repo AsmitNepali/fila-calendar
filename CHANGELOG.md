@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.1] - 2026-07-24
+
+### Fixed
+
+- Single-mode calendar state hydration when form state is a string or range-shaped array.
+- Docs site 404 flash on hard refresh.
+- Docs navigation icons and active state on client-side navigation and page refresh.
+
+### Changed
+
+- Split development setup from production installation in the documentation.
+- Docs deployment workflow now pushes built files directly to the `gh-pages` branch.
+
 ## [0.0.0] - 2026-07-23
 
 ### Added
@@ -18,5 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-month grid with responsive columns, date constraints, and weekend blocking.
 - Nuxt documentation site with GitHub Pages deployment.
 
-[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.0...HEAD
+[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.0...v0.0.1
 [0.0.0]: https://github.com/AsmitNepali/fila-calendar/releases/tag/v0.0.0
