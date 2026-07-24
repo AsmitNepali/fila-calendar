@@ -20,11 +20,15 @@ export async function useDocsNavigation(): Promise<Ref<ContentNavigationItem[]>>
 
   const { data } = await useAsyncData('navigation', () => queryCollectionNavigation('docs'), useContentPageCache('navigation'))
 
+  if (data.value?.length) {
+    navigation.value = data.value
+  }
+
   watch(data, (value) => {
     if (value?.length) {
       navigation.value = value
     }
-  }, { immediate: true })
+  })
 
   return navigation
 }

@@ -9,18 +9,9 @@ const navigationKey = computed(() => withoutTrailingSlash(route.path))
 </script>
 
 <template>
-  <ClientOnly>
-    <UContentNavigation
-      :key="navigationKey"
-      highlight
-      :navigation="items"
-    />
-
-    <template #fallback>
-      <UContentNavigation
-        highlight
-        :navigation="items"
-      />
-    </template>
-  </ClientOnly>
+  <UContentNavigation
+    :key="navigationKey"
+    highlight
+    :navigation="items"
+  />
 </template>
