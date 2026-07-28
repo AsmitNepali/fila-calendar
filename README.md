@@ -1,6 +1,6 @@
 # asmit/fila-calendar
 
-<img src="art/cover.png" alt="Fila Calendar" width="800">
+<img src="art/cover.png" alt="Fila Calendar" width="800" class="filament-hidden">
 
 A polished inline calendar field for Filament forms and infolists. Supports single, range, multiple, and multi-range selection with a self-contained Alpine.js UI — no external calendar library required.
 
