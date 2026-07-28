@@ -1,0 +1,12 @@
+# Keep the dist archive lean: ship only src, resources and the license/readme.
+/.github            export-ignore
+/.gitattributes     export-ignore
+/.gitignore         export-ignore
+/art                export-ignore
+/docs               export-ignore
+/CHANGELOG.md       export-ignore
+/CONTRIBUTING.md    export-ignore
+/SECURITY.md        export-ignore
+
+*.md                diff=markdown
+*.php               diff=php
