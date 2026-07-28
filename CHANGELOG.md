@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2026-07-28
+
+### Fixed
+
+- Carbon constraint now requires `^3.0`. The package uses the `Carbon\Month` and `Carbon\WeekDay` enums, which do not exist in Carbon 2, so a Carbon 2 resolution installed a broken package.
+
+### Changed
+
+- Removed the explicit `illuminate/support` requirement. The supported Laravel range is now dictated by Filament, so the package no longer has to be re-tagged for each Laravel release.
+
 ## [0.0.1] - 2026-07-24
 
 ### Fixed
@@ -31,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-month grid with responsive columns, date constraints, and weekend blocking.
 - Nuxt documentation site with GitHub Pages deployment.
 
-[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.0...v0.0.1
 [0.0.0]: https://github.com/AsmitNepali/fila-calendar/releases/tag/v0.0.0
