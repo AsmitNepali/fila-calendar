@@ -23,7 +23,7 @@ A polished inline calendar field for Filament forms and infolists. Supports sing
 ## Requirements
 
 - PHP 8.2+
-- Laravel 11 or 12
+- Laravel 11+ (whichever versions your Filament release supports)
 - Filament 4 or 5
 
 ## Installation
