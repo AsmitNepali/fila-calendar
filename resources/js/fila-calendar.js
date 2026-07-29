@@ -483,11 +483,7 @@ export default function filaCalendar(config) {
                 return classes.join(' ')
             }
 
-            if (this.isOutOfBounds(day.date)) {
-                classes.push('fi-calendar-day--disabled')
-
-                return classes.join(' ')
-            }
+            const outOfBounds = this.isOutOfBounds(day.date)
 
             const role = this.getRangeRole(day.date)
 
@@ -519,6 +515,10 @@ export default function filaCalendar(config) {
 
             if (this.mode === 'multiple' && Array.isArray(this.state) && this.state.includes(day.date)) {
                 classes.push('fi-calendar-day--selected')
+            }
+
+            if (outOfBounds) {
+                classes.push('fi-calendar-day--disabled')
             }
 
             return classes.join(' ')

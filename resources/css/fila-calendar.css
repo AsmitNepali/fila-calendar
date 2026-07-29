@@ -393,6 +393,41 @@
     background: rgb(39 39 42);
 }
 
+/* Preserve range colors on disabled days so past ranges remain identifiable */
+.fi-calendar-day--disabled.fi-calendar-day--range-start,
+.fi-calendar-day--disabled.fi-calendar-day--range-end,
+.fi-calendar-day--disabled.fi-calendar-day--selected {
+    background: var(--fi-fila-calendar-range-start-bg, rgb(19 102 131));
+    color: var(--fi-fila-calendar-range-start-color, white);
+}
+
+.dark .fi-calendar-day--disabled.fi-calendar-day--range-start,
+.dark .fi-calendar-day--disabled.fi-calendar-day--range-end,
+.dark .fi-calendar-day--disabled.fi-calendar-day--selected {
+    background: var(--fi-fila-calendar-range-start-bg, rgb(24 116 144));
+    color: var(--fi-fila-calendar-range-start-color, white);
+}
+
+.fi-calendar-day--disabled.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
+    background: var(--fi-fila-calendar-range-end-bg, rgb(19 102 131));
+    color: var(--fi-fila-calendar-range-end-color, white);
+}
+
+.dark .fi-calendar-day--disabled.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
+    background: var(--fi-fila-calendar-range-end-bg, rgb(24 116 144));
+    color: var(--fi-fila-calendar-range-end-color, white);
+}
+
+.fi-calendar-day--disabled.fi-calendar-day--in-range {
+    background: var(--fi-fila-calendar-range-middle-bg, rgb(19 102 131 / 0.18));
+    color: var(--fi-fila-calendar-range-middle-color, rgb(19 102 131));
+}
+
+.dark .fi-calendar-day--disabled.fi-calendar-day--in-range {
+    background: var(--fi-fila-calendar-range-middle-bg, rgb(24 116 144 / 0.28));
+    color: var(--fi-fila-calendar-range-middle-color, rgb(186 230 253));
+}
+
 .fi-modal .fi-fila-calendar__months {
     gap: 0.75rem;
 }
