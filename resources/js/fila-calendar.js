@@ -339,45 +339,37 @@ export default function filaCalendar(config) {
             return this.isInteractionBlocked(date)
         },
 
-        splitRangeAroundBlockedDates(start, end) {
-            let rangeStart = start
-            let rangeEnd = end
+        // Blocked days cannot start or end a range, but a range may span them.
+        buildRange(start, end) {
+            return end < start ? { start: end, end: start } : { start, end }
+        },
 
-            if (rangeEnd < rangeStart) {
-                ;[rangeStart, rangeEnd] = [rangeEnd, rangeStart]
-            }
+        // Blocked days cannot be unselected, so clearing a range keeps the blocked runs inside it.
+        blockedSegmentsInRange(range) {
+            const segments = []
+            let segmentStart = null
+            let current = range.start
 
-            const ranges = []
-            let currentStart = null
-            let currentEnd = null
-            let current = rangeStart
-
-            while (current <= rangeEnd) {
+            while (true) {
                 if (this.isInteractionBlocked(current)) {
-                    if (currentStart !== null) {
-                        ranges.push({ start: currentStart, end: currentEnd })
-                        currentStart = null
-                        currentEnd = null
-                    }
-                } else if (currentStart === null) {
-                    currentStart = current
-                    currentEnd = current
-                } else {
-                    currentEnd = current
+                    segmentStart ??= current
+                } else if (segmentStart !== null) {
+                    segments.push({ start: segmentStart, end: addDays(current, -1) })
+                    segmentStart = null
                 }
 
-                if (current === rangeEnd) {
+                if (current === range.end) {
                     break
                 }
 
                 current = addDays(current, 1)
             }
 
-            if (currentStart !== null) {
-                ranges.push({ start: currentStart, end: currentEnd })
+            if (segmentStart !== null) {
+                segments.push({ start: segmentStart, end: range.end })
             }
 
-            return ranges
+            return segments
         },
 
         removeDateFromRange(range, date) {
@@ -427,13 +419,13 @@ export default function filaCalendar(config) {
                 return []
             }
 
-            return this.splitRangeAroundBlockedDates(start, this.hoveredDate)
+            return [this.buildRange(start, this.hoveredDate)]
         },
 
         getPendingHoverRole(date) {
             const start = this.getPendingSelectionStart()
 
-            if (start === null || this.hoveredDate === null || this.isInteractionBlocked(date)) {
+            if (start === null || this.hoveredDate === null) {
                 return null
             }
 
@@ -493,14 +485,10 @@ export default function filaCalendar(config) {
 
             if (this.isUnavailableDate(day.date)) {
                 classes.push('fi-calendar-day--unavailable')
-
-                return classes.join(' ')
             }
 
             if (this.isWeekEndDay(day.date)) {
                 classes.push('fi-calendar-day--week-end')
-
-                return classes.join(' ')
             }
 
             const outOfBounds = this.isOutOfBounds(day.date)
@@ -579,16 +567,7 @@ export default function filaCalendar(config) {
                     return
                 }
 
-                let start = this.state.start
-                let end = date
-
-                if (end < start) {
-                    ;[start, end] = [end, start]
-                }
-
-                const segments = this.splitRangeAroundBlockedDates(start, end)
-
-                this.state = segments[0] ?? null
+                this.state = this.buildRange(this.state.start, date)
                 this.hoveredDate = null
 
                 return
@@ -602,7 +581,9 @@ export default function filaCalendar(config) {
                     const otherRanges = this.getRanges().filter((_, index) => index !== existingRangeIndex)
 
                     // Shift-click clears the whole range, a plain click only drops the clicked day.
-                    const replacementRanges = event?.shiftKey ? [] : this.removeDateFromRange(range, date)
+                    const replacementRanges = event?.shiftKey
+                        ? this.blockedSegmentsInRange(range)
+                        : this.removeDateFromRange(range, date)
 
                     this.state = this.mergeRanges([
                         ...otherRanges,
@@ -622,25 +603,9 @@ export default function filaCalendar(config) {
                     return
                 }
 
-                let start = this.pendingRange.start
-                let end = date
-
-                if (end < start) {
-                    ;[start, end] = [end, start]
-                }
-
-                const newRanges = this.splitRangeAroundBlockedDates(start, end)
-
-                if (newRanges.length === 0) {
-                    this.pendingRange = null
-                    this.hoveredDate = null
-
-                    return
-                }
-
                 this.state = this.mergeRanges([
                     ...this.getRanges(),
-                    ...newRanges,
+                    this.buildRange(this.pendingRange.start, date),
                 ])
 
                 this.pendingRange = null

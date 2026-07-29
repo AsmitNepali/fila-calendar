@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-29
+
+### Changed
+
+- Ranges now span blocked days instead of splitting around them. A blocked day still cannot start or end a range, but one drawn across unavailable, weekend, or out-of-bounds days stays a single range.
+- Blocked days inside a range render with the range highlight instead of the blocked style, so a long span no longer looks broken up.
+- Blocked days are now rendered as disabled buttons, so they no longer take hover, focus, or click styling.
+- Shift-clicking a range keeps the blocked days inside it selected instead of clearing them along with the rest.
+- Today is marked with a dot instead of a recolored number, so it stays readable on top of a range color.
+- Past days inside a range keep a faded version of the range color.
+
+### Removed
+
+- Title tooltip on calendar days.
+
 ## [0.1.0] - 2026-07-29
 
 ### Added
@@ -56,7 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-month grid with responsive columns, date constraints, and weekend blocking.
 - Nuxt documentation site with GitHub Pages deployment.
 
-[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.2...v0.1.0
 [0.0.2]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.0...v0.0.1

@@ -100,4 +100,66 @@ const multiRange = (state = []) => filaCalendar({ mode: 'multi-range', state })
     assert.ok(hiddenDays.filter((day) => day.placeholder).every((day) => day.date === null && day.day === null))
 }
 
+// A range spans blocked days instead of splitting around them.
+{
+    const calendar = filaCalendar({
+        mode: 'multi-range',
+        state: [],
+        disabledDates: ['2026-08-08'],
+        unavailableDates: ['2026-08-08'],
+    })
+
+    calendar.selectDate('2026-08-05')
+    calendar.selectDate('2026-08-12')
+
+    assert.deepEqual(calendar.state, [{ start: '2026-08-05', end: '2026-08-12' }])
+    assert.equal(calendar.isSelected('2026-08-08'), true)
+}
+
+// A blocked day inside a range keeps the range highlight and stays unclickable.
+{
+    const calendar = filaCalendar({
+        mode: 'multi-range',
+        state: [{ start: '2026-08-05', end: '2026-08-12' }],
+        disabledDates: ['2026-08-08'],
+        unavailableDates: ['2026-08-08'],
+    })
+
+    const classes = calendar.dayClasses({ date: '2026-08-08', day: 8, currentMonth: true, placeholder: false })
+
+    assert.ok(classes.includes('fi-calendar-day--in-range'))
+    assert.ok(classes.includes('fi-calendar-day--unavailable'))
+
+    calendar.selectDate('2026-08-08')
+
+    assert.deepEqual(calendar.state, [{ start: '2026-08-05', end: '2026-08-12' }])
+}
+
+// Shift-click keeps the blocked days a range has to cover.
+{
+    const blocked = ['2026-08-06', '2026-08-09', '2026-08-10']
+    const calendar = filaCalendar({
+        mode: 'multi-range',
+        state: [{ start: '2026-08-05', end: '2026-08-10' }],
+        disabledDates: blocked,
+        unavailableDates: blocked,
+    })
+
+    calendar.selectDate('2026-08-07', { shiftKey: true })
+
+    assert.deepEqual(calendar.state, [
+        { start: '2026-08-06', end: '2026-08-06' },
+        { start: '2026-08-09', end: '2026-08-10' },
+    ])
+}
+
+// Shift-click still clears a range with nothing blocked inside it.
+{
+    const calendar = multiRange([{ start: '2026-08-05', end: '2026-08-10' }])
+
+    calendar.selectDate('2026-08-07', { shiftKey: true })
+
+    assert.deepEqual(calendar.state, [])
+}
+
 console.log('ok')

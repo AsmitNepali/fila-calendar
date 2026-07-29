@@ -148,11 +148,10 @@
                             <button
                                 type="button"
                                 x-bind:class="day.placeholder ? 'fi-calendar-day fi-calendar-day--placeholder' : dayClasses(day, hoverRevision)"
-                                x-bind:disabled="day.placeholder || isButtonDisabled(day.date)"
+                                x-bind:disabled="day.placeholder || isInteractionBlocked(day.date)"
                                 x-bind:aria-hidden="day.placeholder ? 'true' : undefined"
                                 x-bind:tabindex="day.placeholder ? '-1' : undefined"
                                 x-on:click="! day.placeholder && selectDate(day.date, $event)"
-                                x-bind:title="! day.placeholder && isSelected(day.date) ? '{{ __('fila-calendar::calendar.clear_range_hint') }}' : undefined"
                                 x-on:mouseenter="! day.placeholder && setHoveredDate(day.date)"
                             >
                                 <span class="fi-calendar-day__number" x-text="day.placeholder ? '' : day.day"></span>

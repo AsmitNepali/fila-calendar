@@ -226,14 +226,29 @@
     visibility: hidden;
 }
 
-.fi-calendar-day--today:not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end) {
+.fi-calendar-day--today:not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end):not(.fi-calendar-day--in-range) {
     box-shadow: inset 0 0 0 1px rgb(19 102 131);
-    color: rgb(19 102 131);
 }
 
-.dark .fi-calendar-day--today:not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end) {
-    color: rgb(125 211 252);
+.dark .fi-calendar-day--today:not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end):not(.fi-calendar-day--in-range) {
     box-shadow: inset 0 0 0 1px rgb(125 211 252);
+}
+
+/* Today is marked with a dot so it stays visible on top of any range color */
+.fi-calendar-day--today::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0.25rem;
+    width: 3px;
+    height: 3px;
+    margin-left: -1.5px;
+    border-radius: 9999px;
+    background: currentColor;
+}
+
+.fi-fila-calendar--xs .fi-calendar-day--today::after {
+    bottom: 0.15rem;
 }
 
 .fi-calendar-day:hover:not(:disabled):not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end):not(.fi-calendar-day--in-range-hover):not(.fi-calendar-day--in-range) {
@@ -380,6 +395,38 @@
     background: rgb(24 24 27);
 }
 
+/* Blocked days inside a range keep the range highlight and their blocked marking */
+.fi-calendar-day--unavailable.fi-calendar-day--in-range,
+.fi-calendar-day--unavailable.fi-calendar-day--in-range:hover,
+.fi-calendar-day--week-end.fi-calendar-day--in-range,
+.fi-calendar-day--week-end.fi-calendar-day--in-range:hover {
+    background: var(--fi-fila-calendar-range-middle-bg, rgb(19 102 131 / 0.18));
+    color: var(--fi-fila-calendar-range-middle-color, rgb(19 102 131));
+    opacity: 1;
+}
+
+.dark .fi-calendar-day--unavailable.fi-calendar-day--in-range,
+.dark .fi-calendar-day--unavailable.fi-calendar-day--in-range:hover,
+.dark .fi-calendar-day--week-end.fi-calendar-day--in-range,
+.dark .fi-calendar-day--week-end.fi-calendar-day--in-range:hover {
+    background: var(--fi-fila-calendar-range-middle-bg, rgb(24 116 144 / 0.28));
+    color: var(--fi-fila-calendar-range-middle-color, rgb(186 230 253));
+}
+
+.fi-calendar-day--unavailable.fi-calendar-day--in-range .fi-calendar-day__number::before,
+.fi-calendar-day--unavailable.fi-calendar-day--in-range-hover .fi-calendar-day__number::before,
+.fi-calendar-day--unavailable.fi-calendar-day--range-start .fi-calendar-day__number::before,
+.fi-calendar-day--unavailable.fi-calendar-day--range-end .fi-calendar-day__number::before,
+.fi-calendar-day--unavailable.fi-calendar-day--selected .fi-calendar-day__number::before {
+    background-color: currentColor;
+}
+
+/* Blocked days are never interactive, so they take no hover or focus treatment */
+.fi-calendar-day--unavailable,
+.fi-calendar-day--week-end {
+    pointer-events: none;
+}
+
 .fi-calendar-day--disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -400,19 +447,31 @@
     background: rgb(39 39 42);
 }
 
-/* Preserve range colors on disabled days so past ranges remain identifiable */
+/* Past days keep the range colors, faded, so old ranges read as past but stay identifiable */
 .fi-calendar-day--disabled.fi-calendar-day--range-start,
 .fi-calendar-day--disabled.fi-calendar-day--range-end,
 .fi-calendar-day--disabled.fi-calendar-day--selected {
-    background: var(--fi-fila-calendar-range-start-bg, rgb(19 102 131));
+    opacity: 1;
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-start-bg, rgb(19 102 131)) 45%, transparent);
     color: var(--fi-fila-calendar-range-start-color, white);
 }
 
 .dark .fi-calendar-day--disabled.fi-calendar-day--range-start,
 .dark .fi-calendar-day--disabled.fi-calendar-day--range-end,
 .dark .fi-calendar-day--disabled.fi-calendar-day--selected {
-    background: var(--fi-fila-calendar-range-start-bg, rgb(24 116 144));
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-start-bg, rgb(24 116 144)) 45%, transparent);
     color: var(--fi-fila-calendar-range-start-color, white);
+}
+
+.fi-calendar-day--disabled.fi-calendar-day--in-range {
+    opacity: 1;
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-middle-bg, rgb(19 102 131 / 0.18)) 45%, transparent);
+    color: var(--fi-fila-calendar-range-middle-color, rgb(19 102 131));
+}
+
+.dark .fi-calendar-day--disabled.fi-calendar-day--in-range {
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-middle-bg, rgb(24 116 144 / 0.28)) 45%, transparent);
+    color: var(--fi-fila-calendar-range-middle-color, rgb(186 230 253));
 }
 
 .fi-calendar-day--disabled.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
