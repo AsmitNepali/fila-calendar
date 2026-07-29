@@ -125,6 +125,7 @@ export default function filaCalendar(config) {
         months: config.months ?? 1,
         selectableHeader: config.selectableHeader ?? false,
         withToday: config.withToday ?? false,
+        showAdjacentMonths: config.showAdjacentMonths ?? true,
         readOnly: config.readOnly ?? false,
         disabled: config.disabled ?? false,
         locale: config.locale ?? null,
@@ -173,22 +174,30 @@ export default function filaCalendar(config) {
             const previousMonthDays = daysInMonth(previousMonth.getFullYear(), previousMonth.getMonth())
 
             for (let index = startOffset - 1; index >= 0; index -= 1) {
-                const day = previousMonthDays - index
-                const date = new Date(previousMonth.getFullYear(), previousMonth.getMonth(), day)
-                days.push({ date: toDateString(date), day, currentMonth: false })
+                if (this.showAdjacentMonths) {
+                    const day = previousMonthDays - index
+                    const date = new Date(previousMonth.getFullYear(), previousMonth.getMonth(), day)
+                    days.push({ key: toDateString(date), date: toDateString(date), day, currentMonth: false, placeholder: false })
+                } else {
+                    days.push({ key: `prev-placeholder-${index}`, date: null, day: null, currentMonth: false, placeholder: true })
+                }
             }
 
             for (let day = 1; day <= totalDays; day += 1) {
                 const date = new Date(year, month, day)
-                days.push({ date: toDateString(date), day, currentMonth: true })
+                days.push({ key: toDateString(date), date: toDateString(date), day, currentMonth: true, placeholder: false })
             }
 
             const nextMonth = addMonths(monthDate, 1)
             let trailingDay = 1
 
             while (days.length % 7 !== 0) {
-                const date = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), trailingDay)
-                days.push({ date: toDateString(date), day: trailingDay, currentMonth: false })
+                if (this.showAdjacentMonths) {
+                    const date = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), trailingDay)
+                    days.push({ key: toDateString(date), date: toDateString(date), day: trailingDay, currentMonth: false, placeholder: false })
+                } else {
+                    days.push({ key: `next-placeholder-${trailingDay}`, date: null, day: null, currentMonth: false, placeholder: true })
+                }
                 trailingDay += 1
             }
 

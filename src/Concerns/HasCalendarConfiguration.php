@@ -25,6 +25,8 @@ trait HasCalendarConfiguration
 
     protected bool|Closure|null $withToday = null;
 
+    protected bool|Closure $showAdjacentMonths = true;
+
     protected bool|Closure|null $selectableHeader = null;
 
     protected bool|Closure $multiple = false;
@@ -140,6 +142,25 @@ trait HasCalendarConfiguration
         $this->withToday = $condition;
 
         return $this;
+    }
+
+    public function showAdjacentMonths(bool|Closure $condition = true): static
+    {
+        $this->showAdjacentMonths = $condition;
+
+        return $this;
+    }
+
+    public function hideAdjacentMonths(bool|Closure $condition = true): static
+    {
+        $this->showAdjacentMonths = is_bool($condition) ? ! $condition : fn (...$args) => ! $this->evaluate($condition, ...$args);
+
+        return $this;
+    }
+
+    public function getShowAdjacentMonths(): bool
+    {
+        return (bool) $this->evaluate($this->showAdjacentMonths);
     }
 
     public function selectableHeader(bool|Closure $condition = true): static

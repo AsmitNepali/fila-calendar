@@ -219,6 +219,13 @@
     color: rgb(161 161 170);
 }
 
+.fi-calendar-day--placeholder {
+    pointer-events: none;
+    background: transparent;
+    border: 0;
+    visibility: hidden;
+}
+
 .fi-calendar-day--today:not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end) {
     box-shadow: inset 0 0 0 1px rgb(19 102 131);
     color: rgb(19 102 131);

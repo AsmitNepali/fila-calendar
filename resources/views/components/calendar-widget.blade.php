@@ -43,6 +43,7 @@
         months: @js($getMonths()),
         selectableHeader: @js($getSelectableHeader()),
         withToday: @js($getWithToday()),
+        showAdjacentMonths: @js($getShowAdjacentMonths()),
         disabled: @js($disabled),
         initialDate: @js($initialDate),
         locale: @js($getLocale()),
@@ -143,16 +144,17 @@
                         class="fi-fila-calendar__days"
                         x-on:mouseleave="clearHoveredDate()"
                     >
-                        <template x-for="day in calendarDays(monthDate)" :key="day.date">
+                        <template x-for="day in calendarDays(monthDate)" :key="day.key">
                             <button
                                 type="button"
-                                x-bind:class="dayClasses(day, hoverRevision)"
-                                x-bind:disabled="isButtonDisabled(day.date)"
-                                x-bind:aria-disabled="isInteractionBlocked(day.date)"
-                                x-on:click="selectDate(day.date)"
-                                x-on:mouseenter="setHoveredDate(day.date)"
+                                x-bind:class="day.placeholder ? 'fi-calendar-day fi-calendar-day--placeholder' : dayClasses(day, hoverRevision)"
+                                x-bind:disabled="day.placeholder || isButtonDisabled(day.date)"
+                                x-bind:aria-hidden="day.placeholder ? 'true' : undefined"
+                                x-bind:tabindex="day.placeholder ? '-1' : undefined"
+                                x-on:click="! day.placeholder && selectDate(day.date)"
+                                x-on:mouseenter="! day.placeholder && setHoveredDate(day.date)"
                             >
-                                <span class="fi-calendar-day__number" x-text="day.day"></span>
+                                <span class="fi-calendar-day__number" x-text="day.placeholder ? '' : day.day"></span>
                             </button>
                         </template>
                     </div>
