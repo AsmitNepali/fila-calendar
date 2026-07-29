@@ -219,3 +219,25 @@ CalendarInput::make('dates')
 - `weekEndDays()` blocks recurring weekdays with a muted style.
 
 Both are skipped when building ranges and hover previews.
+
+## Range colors
+
+Override range selection colors from the host app theme by setting CSS variables on `.fi-fila-calendar` (or a parent). Defaults match the built-in teal palette.
+
+Use Filament's runtime palette variables (`--primary-500`, `--primary-600`, …) injected on `:root`. Do **not** use `--color-primary-500` here — that name is a Tailwind `@theme inline` alias for utility classes and is not available to arbitrary CSS.
+
+```css
+.fi-fila-calendar {
+    --fi-fila-calendar-range-start-bg: var(--primary-500);
+    --fi-fila-calendar-range-start-color: white;
+    --fi-fila-calendar-range-end-bg: var(--primary-600);
+    --fi-fila-calendar-range-end-color: white;
+    --fi-fila-calendar-range-middle-bg: color-mix(in oklab, var(--primary-500) 18%, transparent);
+    --fi-fila-calendar-range-middle-color: var(--primary-600);
+    --fi-fila-calendar-range-middle-hover-bg: color-mix(in oklab, var(--primary-500) 28%, transparent);
+}
+```
+
+Single-day selections and range starts use the start variables. Range ends use the end variables. Days between the start and end use the middle variables.
+
+Rebuild the Filament theme after changing host CSS (`npm run dev` or `npm run build`).
