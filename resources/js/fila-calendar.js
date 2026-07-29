@@ -121,6 +121,8 @@ export default function filaCalendar(config) {
         pendingRange: null,
         hoveredDate: null,
         hoverRevision: 0,
+        suppressSelectUntil: 0,
+        suppressedSelectDate: null,
         mode: config.mode ?? 'single',
         minDate: config.minDate ?? null,
         maxDate: config.maxDate ?? null,
@@ -157,6 +159,15 @@ export default function filaCalendar(config) {
             }
 
             this.refreshDayClasses()
+        },
+
+        suppressImmediateReselect(date) {
+            this.suppressedSelectDate = date
+            this.suppressSelectUntil = Date.now() + 400
+        },
+
+        isImmediateReselect(date) {
+            return this.suppressedSelectDate === date && Date.now() < this.suppressSelectUntil
         },
         monthsToRender() {
             return Array.from({ length: this.months }, (_, index) => addMonths(this.viewStart, index))
@@ -605,6 +616,10 @@ export default function filaCalendar(config) {
             }
 
             if (this.mode === 'multi-range') {
+                if (this.isImmediateReselect(date)) {
+                    return
+                }
+
                 const existingRangeIndex = this.findRangeIndexForDate(date)
 
                 if (existingRangeIndex >= 0) {
@@ -631,6 +646,7 @@ export default function filaCalendar(config) {
 
                     this.pendingRange = null
                     this.hoveredDate = null
+                    this.suppressImmediateReselect(date)
                     this.syncStateToLivewire()
 
                     return
