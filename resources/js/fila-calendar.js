@@ -140,6 +140,10 @@ export default function filaCalendar(config) {
             this.$watch('pendingRange', () => {
                 this.hoverRevision += 1
             })
+
+            this.$watch('state', () => {
+                this.hoverRevision += 1
+            })
         },
 
         monthsToRender() {
