@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- CSS variables for range start, end, and middle day colors so host apps can theme the calendar without overriding component classes.
+
 ## [0.0.2] - 2026-07-28
 
 ### Fixed

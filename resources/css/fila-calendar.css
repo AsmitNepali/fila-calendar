@@ -238,10 +238,14 @@
 }
 
 .fi-calendar-day--selected,
-.fi-calendar-day--range-start,
-.fi-calendar-day--range-end {
-    background: rgb(19 102 131);
-    color: white;
+.fi-calendar-day--range-start {
+    background: var(--fi-fila-calendar-range-start-bg, rgb(19 102 131));
+    color: var(--fi-fila-calendar-range-start-color, white);
+}
+
+.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
+    background: var(--fi-fila-calendar-range-end-bg, rgb(19 102 131));
+    color: var(--fi-fila-calendar-range-end-color, white);
 }
 
 .fi-calendar-day--range-start:not(.fi-calendar-day--range-end) {
@@ -259,40 +263,46 @@
 }
 
 .dark .fi-calendar-day--selected,
-.dark .fi-calendar-day--range-start,
-.dark .fi-calendar-day--range-end {
-    background: rgb(24 116 144);
-    color: white;
+.dark .fi-calendar-day--range-start {
+    background: var(--fi-fila-calendar-range-start-bg, rgb(24 116 144));
+    color: var(--fi-fila-calendar-range-start-color, white);
+}
+
+.dark .fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
+    background: var(--fi-fila-calendar-range-end-bg, rgb(24 116 144));
+    color: var(--fi-fila-calendar-range-end-color, white);
 }
 
 .fi-calendar-day--in-range {
     border-radius: 0;
-    background: rgb(19 102 131 / 0.18);
-    color: rgb(19 102 131);
+    background: var(--fi-fila-calendar-range-middle-bg, rgb(19 102 131 / 0.18));
+    color: var(--fi-fila-calendar-range-middle-color, rgb(19 102 131));
 }
 
 .dark .fi-calendar-day--in-range {
-    background: rgb(24 116 144 / 0.28);
-    color: rgb(186 230 253);
+    background: var(--fi-fila-calendar-range-middle-bg, rgb(24 116 144 / 0.28));
+    color: var(--fi-fila-calendar-range-middle-color, rgb(186 230 253));
 }
 
 .fi-calendar-day--in-range:hover:not(:disabled) {
-    background: rgb(19 102 131 / 0.28);
+    background: var(--fi-fila-calendar-range-middle-hover-bg, rgb(19 102 131 / 0.28));
+    color: var(--fi-fila-calendar-range-middle-hover-text, var(--fi-fila-calendar-range-middle-color, rgb(19 102 131)));
 }
 
 .dark .fi-calendar-day--in-range:hover:not(:disabled) {
-    background: rgb(24 116 144 / 0.38);
+    background: var(--fi-fila-calendar-range-middle-hover-bg, rgb(24 116 144 / 0.38));
+    color: var(--fi-fila-calendar-range-middle-hover-text, var(--fi-fila-calendar-range-middle-color, rgb(186 230 253)));
 }
 
 .fi-calendar-day--in-range-hover {
     border-radius: 0;
-    background: rgb(161 161 170 / 0.22);
-    color: rgb(63 63 70);
+    background: var(--fi-fila-calendar-range-middle-hover-bg, rgb(161 161 170 / 0.22));
+    color: var(--fi-fila-calendar-range-middle-hover-text, var(--fi-fila-calendar-range-middle-color, rgb(63 63 70)));
 }
 
 .dark .fi-calendar-day--in-range-hover {
-    background: rgb(161 161 170 / 0.18);
-    color: rgb(212 212 216);
+    background: var(--fi-fila-calendar-range-middle-hover-bg, rgb(161 161 170 / 0.18));
+    color: var(--fi-fila-calendar-range-middle-hover-text, var(--fi-fila-calendar-range-middle-color, rgb(212 212 216)));
 }
 
 .fi-calendar-day__number {
