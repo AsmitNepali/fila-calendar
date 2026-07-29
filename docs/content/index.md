@@ -39,7 +39,7 @@ Everything you need for date selection
   Smart range splitting
 
   #description
-  Click a middle day in a multi-range to split it into two ranges instead of clearing the whole span.
+  Click a day inside a multi-range to remove just that day, splitting or shrinking the range. Shift-click clears the whole range.
   :::
 
   :::u-page-feature

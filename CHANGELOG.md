@@ -7,9 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-07-29
+
 ### Added
 
 - CSS variables for range start, end, and middle day colors so host apps can theme the calendar without overriding component classes.
+- Shift-click a day of a range in `multi-range` mode to clear the whole range.
+
+### Fixed
+
+- Deselecting a day in `multi-range` mode took two clicks when ranges overlapped. Drawing a range across an existing one appended an overlapping range instead of merging it, so the first click only split one of the two ranges covering the day. Ranges are now merged whenever state is read and written.
+
+### Changed
+
+- Clicking the start or end day of a range in `multi-range` mode now shrinks the range by that day instead of clearing the range. Shift-click clears the whole range.
 
 ## [0.0.2] - 2026-07-28
 
@@ -45,7 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-month grid with responsive columns, date constraints, and weekend blocking.
 - Nuxt documentation site with GitHub Pages deployment.
 
-[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.2...v0.1.0
 [0.0.2]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.0...v0.0.1
 [0.0.0]: https://github.com/AsmitNepali/fila-calendar/releases/tag/v0.0.0
