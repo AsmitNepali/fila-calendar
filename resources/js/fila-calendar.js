@@ -134,16 +134,16 @@ export default function filaCalendar(config) {
 
         init() {
             this.$watch('hoveredDate', () => {
-                this.hoverRevision += 1
+                this.refreshDayClasses()
             })
 
             this.$watch('pendingRange', () => {
-                this.hoverRevision += 1
+                this.refreshDayClasses()
             })
+        },
 
-            this.$watch('state', () => {
-                this.hoverRevision += 1
-            })
+        refreshDayClasses() {
+            this.hoverRevision += 1
         },
 
         monthsToRender() {
@@ -471,8 +471,9 @@ export default function filaCalendar(config) {
             return false
         },
 
-        dayClasses(day, revision = 0) {
+        dayClasses(day, revision = 0, state = null) {
             void revision
+            void state
 
             const classes = ['fi-calendar-day']
 
@@ -544,6 +545,7 @@ export default function filaCalendar(config) {
 
             if (this.mode === 'single') {
                 this.state = this.state === date ? null : date
+                this.refreshDayClasses()
 
                 return
             }
@@ -560,6 +562,7 @@ export default function filaCalendar(config) {
 
                 dates.sort()
                 this.state = dates
+                this.refreshDayClasses()
 
                 return
             }
@@ -568,6 +571,7 @@ export default function filaCalendar(config) {
                 if (! this.state?.start || (this.state.start && this.state.end)) {
                     this.state = { start: date, end: null }
                     this.hoveredDate = null
+                    this.refreshDayClasses()
 
                     return
                 }
@@ -583,6 +587,7 @@ export default function filaCalendar(config) {
 
                 this.state = segments[0] ?? null
                 this.hoveredDate = null
+                this.refreshDayClasses()
 
                 return
             }
@@ -614,6 +619,7 @@ export default function filaCalendar(config) {
 
                     this.pendingRange = null
                     this.hoveredDate = null
+                    this.refreshDayClasses()
 
                     return
                 }
@@ -648,6 +654,7 @@ export default function filaCalendar(config) {
 
                 this.pendingRange = null
                 this.hoveredDate = null
+                this.refreshDayClasses()
             }
         },
 

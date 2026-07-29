@@ -147,7 +147,7 @@
                         <template x-for="day in calendarDays(monthDate)" :key="day.key">
                             <button
                                 type="button"
-                                x-bind:class="day.placeholder ? 'fi-calendar-day fi-calendar-day--placeholder' : dayClasses(day, hoverRevision)"
+                                x-bind:class="day.placeholder ? 'fi-calendar-day fi-calendar-day--placeholder' : dayClasses(day, hoverRevision, state)"
                                 x-bind:disabled="day.placeholder || isButtonDisabled(day.date)"
                                 x-bind:aria-hidden="day.placeholder ? 'true' : undefined"
                                 x-bind:tabindex="day.placeholder ? '-1' : undefined"
