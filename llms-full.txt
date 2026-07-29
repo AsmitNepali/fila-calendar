@@ -197,7 +197,7 @@ CalendarInput::make('range')
     ->mode(CalendarMode::Range);
 ```
 
-Click a start date, then an end date. Blocked dates inside the span are skipped automatically.
+Click a start date, then an end date. A blocked date cannot start or end a range, but a range spans blocked dates in between and keeps them highlighted.
 
 State: `{ "start": "2026-07-02", "end": "2026-07-10" }`
 
@@ -210,7 +210,7 @@ CalendarInput::make('ranges')
 
 Click start, then end to add a range. Repeat to add more ranges. Ranges that overlap are merged into one.
 
-Clicking a day inside a range removes that single day: a middle day splits the range in two, and a start or end day shrinks the range by one. Shift-click any day of a range to clear the whole range at once.
+Clicking a day inside a range removes that single day: a middle day splits the range in two, and a start or end day shrinks the range by one. Shift-click any day of a range to clear it. Blocked days inside the range stay selected, because they cannot be unselected on their own.
 
 State:
 
@@ -282,7 +282,7 @@ The padding cells stay in the grid so every month keeps its seven columns, but t
 - `unavailableDates()` marks specific dates with a strikethrough style.
 - `weekEndDays()` blocks recurring weekdays with a muted style.
 
-Both are skipped when building ranges and hover previews.
+Neither can be clicked, so neither can start or end a range. A range drawn over them stays one continuous range, and the blocked days inside it are highlighted as part of the range instead of showing the blocked style.
 
 ## Range colors
 
