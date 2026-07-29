@@ -84,4 +84,20 @@ const multiRange = (state = []) => filaCalendar({ mode: 'multi-range', state })
     assert.equal(calendar.getRanges().length, 2)
 }
 
+// Hidden adjacent months keep the grid at seven columns with inert placeholders.
+{
+    const shown = filaCalendar({ mode: 'single', initialDate: '2026-08-01' })
+    const hidden = filaCalendar({ mode: 'single', initialDate: '2026-08-01', showAdjacentMonths: false })
+    const month = new Date(2026, 7, 1)
+
+    const shownDays = shown.calendarDays(month)
+    const hiddenDays = hidden.calendarDays(month)
+
+    assert.equal(hiddenDays.length, shownDays.length)
+    assert.equal(hiddenDays.length % 7, 0)
+    assert.equal(hiddenDays.filter((day) => day.placeholder).length, shownDays.filter((day) => ! day.date?.startsWith('2026-08')).length)
+    assert.ok(hiddenDays.filter((day) => ! day.placeholder).every((day) => day.date.startsWith('2026-08')))
+    assert.ok(hiddenDays.filter((day) => day.placeholder).every((day) => day.date === null && day.day === null))
+}
+
 console.log('ok')
