@@ -142,6 +142,22 @@ CalendarInput::make('dates')
   <tr>
     <td>
       <code>
+        showAdjacentMonths()
+      </code>
+      
+       / <code>
+        hideAdjacentMonths()
+      </code>
+    </td>
+    
+    <td>
+      Render the previous/next month days that pad the first and last week (default: shown)
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
         minDate()
       </code>
       
@@ -212,6 +228,17 @@ CalendarInput::make('dates')
   </tr>
 </tbody>
 </table>
+
+## Adjacent month days
+
+By default the first and last week of a month are padded with days from the previous and next month. Pass `hideAdjacentMonths()` (or `showAdjacentMonths(false)`) to drop them:
+
+```php
+CalendarInput::make('dates')
+    ->hideAdjacentMonths();
+```
+
+The padding cells stay in the grid so every month keeps its seven columns, but they render empty: not clickable, not focusable, and never hovered or selected.
 
 ## Unavailable vs weekend
 

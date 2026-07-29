@@ -251,19 +251,31 @@ CalendarInput::make('dates')
 
 ## Options
 
-| Method                    | Description                                                    |
-| ------------------------- | -------------------------------------------------------------- |
-| `mode()`                  | `CalendarMode::Single`, `Multiple`, `Range`, or `MultiRange`   |
-| `months()`                | Number of months to render (1–12)                              |
-| `calendarColumns()`       | Grid columns on wide screens                                   |
-| `size()`                  | Size variant, e.g. `xs`                                        |
-| `scrollable()`            | Scroll the month grid inside a viewport                        |
-| `selectableHeader()`      | Month/year dropdowns in the toolbar                            |
-| `withToday()`             | Show a Today button                                            |
-| `minDate()` / `maxDate()` | Bounds as `Y-m-d` strings                                      |
-| `unavailableDates()`      | Dates that cannot be selected                                  |
-| `weekEndDays()`           | Weekdays treated as blocked (`0`–`6`, names, or `sun`/`mon`/…) |
-| `locale()`                | Locale for month and weekday labels                            |
+| Method                                          | Description                                                                           |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `mode()`                                        | `CalendarMode::Single`, `Multiple`, `Range`, or `MultiRange`                          |
+| `months()`                                      | Number of months to render (1–12)                                                     |
+| `calendarColumns()`                             | Grid columns on wide screens                                                          |
+| `size()`                                        | Size variant, e.g. `xs`                                                               |
+| `scrollable()`                                  | Scroll the month grid inside a viewport                                               |
+| `selectableHeader()`                            | Month/year dropdowns in the toolbar                                                   |
+| `withToday()`                                   | Show a Today button                                                                   |
+| `showAdjacentMonths()` / `hideAdjacentMonths()` | Render the previous/next month days that pad the first and last week (default: shown) |
+| `minDate()` / `maxDate()`                       | Bounds as `Y-m-d` strings                                                             |
+| `unavailableDates()`                            | Dates that cannot be selected                                                         |
+| `weekEndDays()`                                 | Weekdays treated as blocked (`0`–`6`, names, or `sun`/`mon`/…)                        |
+| `locale()`                                      | Locale for month and weekday labels                                                   |
+
+## Adjacent month days
+
+By default the first and last week of a month are padded with days from the previous and next month. Pass `hideAdjacentMonths()` (or `showAdjacentMonths(false)`) to drop them:
+
+```php
+CalendarInput::make('dates')
+    ->hideAdjacentMonths();
+```
+
+The padding cells stay in the grid so every month keeps its seven columns, but they render empty: not clickable, not focusable, and never hovered or selected.
 
 ## Unavailable vs weekend
 
