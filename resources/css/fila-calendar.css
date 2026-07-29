@@ -236,11 +236,11 @@
     box-shadow: inset 0 0 0 1px rgb(125 211 252);
 }
 
-.fi-calendar-day:hover:not(:disabled):not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end):not(.fi-calendar-day--in-range-hover) {
+.fi-calendar-day:hover:not(:disabled):not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end):not(.fi-calendar-day--in-range-hover):not(.fi-calendar-day--in-range) {
     background: rgb(244 244 245);
 }
 
-.dark .fi-calendar-day:hover:not(:disabled):not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end):not(.fi-calendar-day--in-range-hover) {
+.dark .fi-calendar-day:hover:not(:disabled):not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end):not(.fi-calendar-day--in-range-hover):not(.fi-calendar-day--in-range) {
     background: rgb(39 39 42);
 }
 
