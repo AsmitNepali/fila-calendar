@@ -6,7 +6,7 @@
     @include('fila-calendar::components.calendar-widget', [
         'readOnly' => false,
         'disabled' => $isDisabled(),
-        'hydratedState' => $getState(),
+        'hydratedState' => null,
         'statePath' => $statePath,
         'initialDate' => now()->toDateString(),
     ])

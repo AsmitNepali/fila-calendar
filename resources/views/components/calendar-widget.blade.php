@@ -11,10 +11,6 @@
     ]);
 
     $calendarYearRange = range(((int) now()->format('Y')) - 50, ((int) now()->format('Y')) + 50);
-
-    $calendarAlpineSrc = FilamentAsset::getAlpineComponentSrc('fila-calendar', package: 'asmit/fila-calendar');
-    $calendarAlpinePath = public_path('js/asmit/fila-calendar/components/fila-calendar.js');
-    $calendarAlpineSrc .= '&t='.(is_file($calendarAlpinePath) ? filemtime($calendarAlpinePath) : time());
 @endphp
 
 <div
@@ -29,11 +25,15 @@
         wire:ignore
     @endunless
     x-load
-    x-load-src="{{ $calendarAlpineSrc }}"
+    x-load-src="{{ FilamentAsset::getAlpineComponentSrc('fila-calendar', package: 'asmit/fila-calendar') }}"
     x-data="filaCalendar({
-        state: @js($hydratedState),
-        statePath: @js($statePath ?? null),
-        readOnly: @js((bool) $readOnly),
+        @if ($readOnly)
+            state: @js($hydratedState),
+            readOnly: true,
+        @else
+            state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
+            readOnly: false,
+        @endif
         mode: @js($getResolvedMode()->value),
         minDate: @js($getMinDate()),
         maxDate: @js($getMaxDate()),
@@ -147,12 +147,12 @@
                         <template x-for="day in calendarDays(monthDate)" :key="day.key">
                             <button
                                 type="button"
-                                x-bind:class="day.placeholder ? 'fi-calendar-day fi-calendar-day--placeholder' : dayClasses(day, hoverRevision, state)"
+                                x-bind:class="day.placeholder ? 'fi-calendar-day fi-calendar-day--placeholder' : dayClasses(day, hoverRevision)"
                                 x-bind:disabled="day.placeholder || isButtonDisabled(day.date)"
                                 x-bind:aria-hidden="day.placeholder ? 'true' : undefined"
                                 x-bind:tabindex="day.placeholder ? '-1' : undefined"
-                                x-on:click="if (! day.placeholder) selectDate(day.date)"
-                                x-on:mouseenter="if (! day.placeholder) setHoveredDate(day.date)"
+                                x-on:click="! day.placeholder && selectDate(day.date)"
+                                x-on:mouseenter="! day.placeholder && setHoveredDate(day.date)"
                             >
                                 <span class="fi-calendar-day__number" x-text="day.placeholder ? '' : day.day"></span>
                             </button>

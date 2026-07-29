@@ -102,27 +102,20 @@ export default function filaCalendar(config) {
     }
 
     const resolveInitialState = () => {
-        if (config.mode === 'multi-range') {
-            return Array.isArray(config.state) ? JSON.parse(JSON.stringify(config.state)) : []
+        if (config.readOnly && config.mode === 'multi-range') {
+            return Array.isArray(config.state) ? config.state : []
         }
 
-        if (config.state === null || config.state === undefined) {
-            return config.state ?? null
-        }
-
-        return JSON.parse(JSON.stringify(config.state))
+        return config.state
     }
 
     const anchor = resolveInitialAnchorDate()
 
     return {
         state: resolveInitialState(),
-        statePath: config.statePath ?? null,
         pendingRange: null,
         hoveredDate: null,
         hoverRevision: 0,
-        suppressSelectUntil: 0,
-        suppressedSelectDate: null,
         mode: config.mode ?? 'single',
         minDate: config.minDate ?? null,
         maxDate: config.maxDate ?? null,
@@ -141,34 +134,14 @@ export default function filaCalendar(config) {
 
         init() {
             this.$watch('hoveredDate', () => {
-                this.refreshDayClasses()
+                this.hoverRevision += 1
             })
 
             this.$watch('pendingRange', () => {
-                this.refreshDayClasses()
+                this.hoverRevision += 1
             })
         },
 
-        refreshDayClasses() {
-            this.hoverRevision += 1
-        },
-
-        syncStateToLivewire() {
-            if (! this.readOnly && this.statePath) {
-                this.$wire.set(this.statePath, JSON.parse(JSON.stringify(this.state)), false)
-            }
-
-            this.refreshDayClasses()
-        },
-
-        suppressImmediateReselect(date) {
-            this.suppressedSelectDate = date
-            this.suppressSelectUntil = Date.now() + 400
-        },
-
-        isImmediateReselect(date) {
-            return this.suppressedSelectDate === date && Date.now() < this.suppressSelectUntil
-        },
         monthsToRender() {
             return Array.from({ length: this.months }, (_, index) => addMonths(this.viewStart, index))
         },
@@ -494,9 +467,8 @@ export default function filaCalendar(config) {
             return false
         },
 
-        dayClasses(day, revision = 0, state = null) {
+        dayClasses(day, revision = 0) {
             void revision
-            void state
 
             const classes = ['fi-calendar-day']
 
@@ -568,7 +540,6 @@ export default function filaCalendar(config) {
 
             if (this.mode === 'single') {
                 this.state = this.state === date ? null : date
-                this.syncStateToLivewire()
 
                 return
             }
@@ -585,7 +556,6 @@ export default function filaCalendar(config) {
 
                 dates.sort()
                 this.state = dates
-                this.syncStateToLivewire()
 
                 return
             }
@@ -594,7 +564,6 @@ export default function filaCalendar(config) {
                 if (! this.state?.start || (this.state.start && this.state.end)) {
                     this.state = { start: date, end: null }
                     this.hoveredDate = null
-                    this.syncStateToLivewire()
 
                     return
                 }
@@ -610,33 +579,21 @@ export default function filaCalendar(config) {
 
                 this.state = segments[0] ?? null
                 this.hoveredDate = null
-                this.syncStateToLivewire()
 
                 return
             }
 
             if (this.mode === 'multi-range') {
-                if (this.isImmediateReselect(date)) {
-                    return
-                }
-
                 const existingRangeIndex = this.findRangeIndexForDate(date)
 
                 if (existingRangeIndex >= 0) {
                     const range = this.getRanges()[existingRangeIndex]
+                    const role = this.getRangeRole(date)
                     const otherRanges = this.getRanges().filter((_, index) => index !== existingRangeIndex)
                     let replacementRanges = []
 
-                    const isMiddle = date > range.start && date < range.end
-                    const isStart = date === range.start && range.start !== range.end
-                    const isEnd = date === range.end && range.start !== range.end
-
-                    if (isMiddle) {
+                    if (role === 'middle') {
                         replacementRanges = this.splitRangeExcludingMiddleDate(range, date)
-                    } else if (isStart) {
-                        replacementRanges = [{ start: addDays(range.start, 1), end: range.end }]
-                    } else if (isEnd) {
-                        replacementRanges = [{ start: range.start, end: addDays(range.end, -1) }]
                     }
 
                     this.state = [
@@ -646,8 +603,6 @@ export default function filaCalendar(config) {
 
                     this.pendingRange = null
                     this.hoveredDate = null
-                    this.suppressImmediateReselect(date)
-                    this.syncStateToLivewire()
 
                     return
                 }
@@ -682,7 +637,6 @@ export default function filaCalendar(config) {
 
                 this.pendingRange = null
                 this.hoveredDate = null
-                this.syncStateToLivewire()
             }
         },
 
