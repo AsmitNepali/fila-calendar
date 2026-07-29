@@ -209,9 +209,30 @@ export default function filaCalendar(config) {
                 return []
             }
 
-            return this.state
-                .map((range) => normalizeRange(range))
-                .filter((range) => range !== null)
+            return this.mergeRanges(
+                this.state
+                    .map((range) => normalizeRange(range))
+                    .filter((range) => range !== null),
+            )
+        },
+
+        mergeRanges(ranges) {
+            // ponytail: merges overlapping ranges only, touching ranges stay separate on purpose.
+            return [...ranges]
+                .sort((left, right) => left.start.localeCompare(right.start))
+                .reduce((merged, range) => {
+                    const last = merged[merged.length - 1]
+
+                    if (last && range.start <= last.end) {
+                        last.end = range.end > last.end ? range.end : last.end
+
+                        return merged
+                    }
+
+                    merged.push({ ...range })
+
+                    return merged
+                }, [])
         },
 
         findRangeIndexForDate(date) {
@@ -359,25 +380,15 @@ export default function filaCalendar(config) {
             return ranges
         },
 
-        splitRangeExcludingMiddleDate(range, date) {
-            const start = range.start
-            const end = range.end
-
-            if (date <= start || date >= end) {
-                return []
-            }
-
+        removeDateFromRange(range, date) {
             const ranges = []
-            const dayBefore = addDays(date, -1)
 
-            if (dayBefore >= start) {
-                ranges.push({ start, end: dayBefore })
+            if (date > range.start) {
+                ranges.push({ start: range.start, end: addDays(date, -1) })
             }
 
-            const dayAfter = addDays(date, 1)
-
-            if (dayAfter <= end) {
-                ranges.push({ start: dayAfter, end })
+            if (date < range.end) {
+                ranges.push({ start: addDays(date, 1), end: range.end })
             }
 
             return ranges
@@ -533,7 +544,7 @@ export default function filaCalendar(config) {
             return classes.join(' ')
         },
 
-        selectDate(date) {
+        selectDate(date, event = null) {
             if (this.readOnly || this.isInteractionBlocked(date)) {
                 return
             }
@@ -588,18 +599,15 @@ export default function filaCalendar(config) {
 
                 if (existingRangeIndex >= 0) {
                     const range = this.getRanges()[existingRangeIndex]
-                    const role = this.getRangeRole(date)
                     const otherRanges = this.getRanges().filter((_, index) => index !== existingRangeIndex)
-                    let replacementRanges = []
 
-                    if (role === 'middle') {
-                        replacementRanges = this.splitRangeExcludingMiddleDate(range, date)
-                    }
+                    // Shift-click clears the whole range, a plain click only drops the clicked day.
+                    const replacementRanges = event?.shiftKey ? [] : this.removeDateFromRange(range, date)
 
-                    this.state = [
+                    this.state = this.mergeRanges([
                         ...otherRanges,
                         ...replacementRanges,
-                    ].sort((left, right) => left.start.localeCompare(right.start))
+                    ])
 
                     this.pendingRange = null
                     this.hoveredDate = null
@@ -630,10 +638,10 @@ export default function filaCalendar(config) {
                     return
                 }
 
-                this.state = [
+                this.state = this.mergeRanges([
                     ...this.getRanges(),
                     ...newRanges,
-                ].sort((left, right) => left.start.localeCompare(right.start))
+                ])
 
                 this.pendingRange = null
                 this.hoveredDate = null
