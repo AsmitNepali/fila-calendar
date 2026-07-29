@@ -42,7 +42,9 @@ CalendarInput::make('ranges')
     ->mode(CalendarMode::MultiRange);
 ```
 
-Click start, then end to add a range. Repeat to add more ranges. Click an existing range's start/end to remove it, or a middle day to split it.
+Click start, then end to add a range. Repeat to add more ranges. Ranges that overlap are merged into one.
+
+Clicking a day inside a range removes that single day: a middle day splits the range in two, and a start or end day shrinks the range by one. Shift-click any day of a range to clear the whole range at once.
 
 State:
 
