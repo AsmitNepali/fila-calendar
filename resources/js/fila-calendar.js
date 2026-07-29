@@ -102,17 +102,22 @@ export default function filaCalendar(config) {
     }
 
     const resolveInitialState = () => {
-        if (config.readOnly && config.mode === 'multi-range') {
-            return Array.isArray(config.state) ? config.state : []
+        if (config.mode === 'multi-range') {
+            return Array.isArray(config.state) ? JSON.parse(JSON.stringify(config.state)) : []
         }
 
-        return config.state
+        if (config.state === null || config.state === undefined) {
+            return config.state ?? null
+        }
+
+        return JSON.parse(JSON.stringify(config.state))
     }
 
     const anchor = resolveInitialAnchorDate()
 
     return {
         state: resolveInitialState(),
+        statePath: config.statePath ?? null,
         pendingRange: null,
         hoveredDate: null,
         hoverRevision: 0,
@@ -144,9 +149,15 @@ export default function filaCalendar(config) {
 
         refreshDayClasses() {
             this.hoverRevision += 1
-            console.log('[fila-calendar] refreshDayClasses', this.hoverRevision)
         },
 
+        syncStateToLivewire() {
+            if (! this.readOnly && this.statePath) {
+                this.$wire.set(this.statePath, JSON.parse(JSON.stringify(this.state)), false)
+            }
+
+            this.refreshDayClasses()
+        },
         monthsToRender() {
             return Array.from({ length: this.months }, (_, index) => addMonths(this.viewStart, index))
         },
@@ -540,23 +551,13 @@ export default function filaCalendar(config) {
         },
 
         selectDate(date) {
-            console.log('[fila-calendar] selectDate', {
-                date,
-                mode: this.mode,
-                blocked: this.isInteractionBlocked(date),
-                ranges: this.mode === 'multi-range' ? this.getRanges() : this.state,
-                pendingRange: this.pendingRange,
-                hoverRevision: this.hoverRevision,
-            })
-
             if (this.readOnly || this.isInteractionBlocked(date)) {
-                console.log('[fila-calendar] selectDate blocked/readOnly')
                 return
             }
 
             if (this.mode === 'single') {
                 this.state = this.state === date ? null : date
-                this.refreshDayClasses()
+                this.syncStateToLivewire()
 
                 return
             }
@@ -573,7 +574,7 @@ export default function filaCalendar(config) {
 
                 dates.sort()
                 this.state = dates
-                this.refreshDayClasses()
+                this.syncStateToLivewire()
 
                 return
             }
@@ -582,7 +583,7 @@ export default function filaCalendar(config) {
                 if (! this.state?.start || (this.state.start && this.state.end)) {
                     this.state = { start: date, end: null }
                     this.hoveredDate = null
-                    this.refreshDayClasses()
+                    this.syncStateToLivewire()
 
                     return
                 }
@@ -598,7 +599,7 @@ export default function filaCalendar(config) {
 
                 this.state = segments[0] ?? null
                 this.hoveredDate = null
-                this.refreshDayClasses()
+                this.syncStateToLivewire()
 
                 return
             }
@@ -630,7 +631,7 @@ export default function filaCalendar(config) {
 
                     this.pendingRange = null
                     this.hoveredDate = null
-                    this.refreshDayClasses()
+                    this.syncStateToLivewire()
 
                     return
                 }
@@ -665,7 +666,7 @@ export default function filaCalendar(config) {
 
                 this.pendingRange = null
                 this.hoveredDate = null
-                this.refreshDayClasses()
+                this.syncStateToLivewire()
             }
         },
 

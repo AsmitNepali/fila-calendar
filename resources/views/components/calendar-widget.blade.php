@@ -31,13 +31,9 @@
     x-load
     x-load-src="{{ $calendarAlpineSrc }}"
     x-data="filaCalendar({
-        @if ($readOnly)
-            state: @js($hydratedState),
-            readOnly: true,
-        @else
-            state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
-            readOnly: false,
-        @endif
+        state: @js($hydratedState),
+        statePath: @js($statePath ?? null),
+        readOnly: @js((bool) $readOnly),
         mode: @js($getResolvedMode()->value),
         minDate: @js($getMinDate()),
         maxDate: @js($getMaxDate()),
