@@ -144,6 +144,7 @@ export default function filaCalendar(config) {
 
         refreshDayClasses() {
             this.hoverRevision += 1
+            console.log('[fila-calendar] refreshDayClasses', this.hoverRevision)
         },
 
         monthsToRender() {
@@ -539,7 +540,17 @@ export default function filaCalendar(config) {
         },
 
         selectDate(date) {
+            console.log('[fila-calendar] selectDate', {
+                date,
+                mode: this.mode,
+                blocked: this.isInteractionBlocked(date),
+                ranges: this.mode === 'multi-range' ? this.getRanges() : this.state,
+                pendingRange: this.pendingRange,
+                hoverRevision: this.hoverRevision,
+            })
+
             if (this.readOnly || this.isInteractionBlocked(date)) {
+                console.log('[fila-calendar] selectDate blocked/readOnly')
                 return
             }
 

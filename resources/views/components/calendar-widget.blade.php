@@ -11,6 +11,10 @@
     ]);
 
     $calendarYearRange = range(((int) now()->format('Y')) - 50, ((int) now()->format('Y')) + 50);
+
+    $calendarAlpineSrc = FilamentAsset::getAlpineComponentSrc('fila-calendar', package: 'asmit/fila-calendar');
+    $calendarAlpinePath = public_path('js/asmit/fila-calendar/components/fila-calendar.js');
+    $calendarAlpineSrc .= '&t='.(is_file($calendarAlpinePath) ? filemtime($calendarAlpinePath) : time());
 @endphp
 
 <div
@@ -25,7 +29,7 @@
         wire:ignore
     @endunless
     x-load
-    x-load-src="{{ FilamentAsset::getAlpineComponentSrc('fila-calendar', package: 'asmit/fila-calendar') }}"
+    x-load-src="{{ $calendarAlpineSrc }}"
     x-data="filaCalendar({
         @if ($readOnly)
             state: @js($hydratedState),
