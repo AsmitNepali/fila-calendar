@@ -588,12 +588,19 @@ export default function filaCalendar(config) {
 
                 if (existingRangeIndex >= 0) {
                     const range = this.getRanges()[existingRangeIndex]
-                    const role = this.getRangeRole(date)
                     const otherRanges = this.getRanges().filter((_, index) => index !== existingRangeIndex)
                     let replacementRanges = []
 
-                    if (role === 'middle') {
+                    const isMiddle = date > range.start && date < range.end
+                    const isStart = date === range.start && range.start !== range.end
+                    const isEnd = date === range.end && range.start !== range.end
+
+                    if (isMiddle) {
                         replacementRanges = this.splitRangeExcludingMiddleDate(range, date)
+                    } else if (isStart) {
+                        replacementRanges = [{ start: addDays(range.start, 1), end: range.end }]
+                    } else if (isEnd) {
+                        replacementRanges = [{ start: range.start, end: addDays(range.end, -1) }]
                     }
 
                     this.state = [

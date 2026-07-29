@@ -151,8 +151,8 @@
                                 x-bind:disabled="day.placeholder || isButtonDisabled(day.date)"
                                 x-bind:aria-hidden="day.placeholder ? 'true' : undefined"
                                 x-bind:tabindex="day.placeholder ? '-1' : undefined"
-                                x-on:click="! day.placeholder && selectDate(day.date)"
-                                x-on:mouseenter="! day.placeholder && setHoveredDate(day.date)"
+                                x-on:click="if (! day.placeholder) selectDate(day.date)"
+                                x-on:mouseenter="if (! day.placeholder) setHoveredDate(day.date)"
                             >
                                 <span class="fi-calendar-day__number" x-text="day.placeholder ? '' : day.day"></span>
                             </button>
