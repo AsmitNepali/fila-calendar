@@ -72,8 +72,14 @@ export default function filaCalendar(config) {
         }
 
         return dates.map((date) => {
-            if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
-                return date
+            // Accept '2026-08-11', and datetime strings like '2026-08-11 14:30:00' or an ISO
+            // timestamp, which parseDate would otherwise turn into NaN.
+            if (typeof date === 'string') {
+                const day = date.match(/^(\d{4}-\d{2}-\d{2})/)
+
+                if (day) {
+                    return day[1]
+                }
             }
 
             return toDateString(parseDate(date))
@@ -121,6 +127,7 @@ export default function filaCalendar(config) {
         maxDate: config.maxDate ?? null,
         unavailableDates: normalizeDateList(config.unavailableDates ?? config.disabledDates ?? []),
         disabledDates: normalizeDateList(config.disabledDates ?? config.unavailableDates ?? []),
+        reservedDates: normalizeDateList(config.reservedDates ?? []),
         weekEndDays: config.weekEndDays ?? [],
         months: config.months ?? 1,
         selectableHeader: config.selectableHeader ?? false,
@@ -311,6 +318,10 @@ export default function filaCalendar(config) {
             return this.unavailableDates.includes(date)
         },
 
+        isReservedDate(date) {
+            return this.reservedDates.includes(date)
+        },
+
         isWeekEndDay(date) {
             return this.weekEndDays.includes(parseDate(date).getDay())
         },
@@ -332,7 +343,7 @@ export default function filaCalendar(config) {
         },
 
         isInteractionBlocked(date) {
-            return this.isButtonDisabled(date) || this.isUnavailableDate(date) || this.isWeekEndDay(date)
+            return this.isButtonDisabled(date) || this.isUnavailableDate(date) || this.isReservedDate(date) || this.isWeekEndDay(date)
         },
 
         isDisabled(date) {
@@ -483,7 +494,10 @@ export default function filaCalendar(config) {
                 classes.push('fi-calendar-day--today')
             }
 
-            if (this.isUnavailableDate(day.date)) {
+            // Reserved wins over unavailable: "taken" is the more specific reason to show.
+            if (this.isReservedDate(day.date)) {
+                classes.push('fi-calendar-day--reserved')
+            } else if (this.isUnavailableDate(day.date)) {
                 classes.push('fi-calendar-day--unavailable')
             }
 

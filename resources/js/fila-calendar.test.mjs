@@ -162,4 +162,47 @@ const multiRange = (state = []) => filaCalendar({ mode: 'multi-range', state })
     assert.deepEqual(calendar.state, [])
 }
 
+// A reserved day is blocked, and cannot start a range.
+{
+    const calendar = filaCalendar({ mode: 'multi-range', state: [], reservedDates: ['2026-08-11'] })
+
+    assert.equal(calendar.isReservedDate('2026-08-11'), true)
+    assert.equal(calendar.isInteractionBlocked('2026-08-11'), true)
+
+    calendar.selectDate('2026-08-11')
+
+    assert.deepEqual(calendar.state, [])
+}
+
+// A range spanning a reserved day keeps the reserved marker, so the conflict stays visible.
+{
+    const calendar = filaCalendar({
+        mode: 'multi-range',
+        state: [{ start: '2026-08-10', end: '2026-08-12' }],
+        reservedDates: ['2026-08-11'],
+    })
+
+    const classes = calendar.dayClasses({ date: '2026-08-11', day: 11, currentMonth: true, placeholder: false })
+
+    assert.ok(classes.includes('fi-calendar-day--in-range'))
+    assert.ok(classes.includes('fi-calendar-day--reserved'))
+}
+
+// Reserved beats unavailable when a date is in both lists.
+{
+    const calendar = filaCalendar({ mode: 'single', reservedDates: ['2026-08-11'], unavailableDates: ['2026-08-11'] })
+
+    const classes = calendar.dayClasses({ date: '2026-08-11', day: 11, currentMonth: true, placeholder: false })
+
+    assert.ok(classes.includes('fi-calendar-day--reserved'))
+    assert.ok(! classes.includes('fi-calendar-day--unavailable'))
+}
+
+// Carbon-style datetime strings from the server still match a plain Y-m-d day.
+{
+    const calendar = filaCalendar({ mode: 'single', reservedDates: ['2026-08-11 14:30:00'] })
+
+    assert.equal(calendar.isReservedDate('2026-08-11'), true)
+}
+
 console.log('ok')

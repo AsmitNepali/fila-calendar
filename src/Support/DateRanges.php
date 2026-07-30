@@ -91,6 +91,25 @@ class DateRanges
     }
 
     /**
+     * Every date a calendar state covers, with ranges expanded to their individual days.
+     * Unparseable state yields an empty list; validating it is not this method's job.
+     *
+     * @return list<string>
+     */
+    public static function flatten(mixed $state): array
+    {
+        if (is_array($state) && array_key_exists('start', $state) && array_key_exists('end', $state)) {
+            if (blank($state['start']) || blank($state['end'])) {
+                return [];
+            }
+
+            $state = [$state];
+        }
+
+        return rescue(fn (): array => self::normalizeInput($state), [], report: false);
+    }
+
+    /**
      * @return list<string>
      */
     public static function normalizeInput(mixed $state): array

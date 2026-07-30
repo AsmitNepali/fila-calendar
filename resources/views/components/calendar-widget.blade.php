@@ -39,6 +39,7 @@
         maxDate: @js($getMaxDate()),
         unavailableDates: @js($getUnavailableDates()),
         disabledDates: @js($getDisabledDates()),
+        reservedDates: @js($getReservedDates()),
         weekEndDays: @js($getWeekEndDays()),
         months: @js($getMonths()),
         selectableHeader: @js($getSelectableHeader()),
@@ -151,10 +152,19 @@
                                 x-bind:disabled="day.placeholder || isInteractionBlocked(day.date)"
                                 x-bind:aria-hidden="day.placeholder ? 'true' : undefined"
                                 x-bind:tabindex="day.placeholder ? '-1' : undefined"
+                                x-bind:title="! day.placeholder && isReservedDate(day.date) ? @js(__('fila-calendar::calendar.reserved')) : null"
                                 x-on:click="! day.placeholder && selectDate(day.date, $event)"
                                 x-on:mouseenter="! day.placeholder && setHoveredDate(day.date)"
                             >
                                 <span class="fi-calendar-day__number" x-text="day.placeholder ? '' : day.day"></span>
+
+                                <template x-if="! day.placeholder && isReservedDate(day.date)">
+                                    <x-filament::icon
+                                        icon="heroicon-m-lock-closed"
+                                        class="fi-calendar-day__icon"
+                                        aria-label="{{ __('fila-calendar::calendar.reserved') }}"
+                                    />
+                                </template>
                             </button>
                         </template>
                     </div>

@@ -371,6 +371,41 @@
     background: rgb(39 39 42);
 }
 
+/* Reserved: blocked like unavailable, but reads as "taken" rather than "closed". */
+.fi-calendar-day--reserved {
+    cursor: not-allowed;
+    color: rgb(146 64 14);
+    background: rgb(254 243 199);
+    opacity: 1;
+}
+
+.dark .fi-calendar-day--reserved {
+    color: rgb(253 230 138);
+    background: rgb(69 26 3);
+}
+
+.fi-calendar-day--reserved:hover {
+    background: rgb(254 243 199);
+}
+
+.dark .fi-calendar-day--reserved:hover {
+    background: rgb(69 26 3);
+}
+
+.fi-calendar-day__icon {
+    position: absolute;
+    top: 0.125rem;
+    right: 0.125rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    pointer-events: none;
+}
+
+.fi-fila-calendar--xs .fi-calendar-day__icon {
+    width: 0.5rem;
+    height: 0.5rem;
+}
+
 .fi-calendar-day[aria-disabled='true']:not(:disabled) {
     opacity: 1;
 }

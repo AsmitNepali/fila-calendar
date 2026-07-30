@@ -5,7 +5,9 @@ namespace Asmit\FilaCalendar\Concerns;
 use Asmit\FilaCalendar\Support\CalendarMode;
 use Asmit\FilaCalendar\Support\Locale;
 use Asmit\FilaCalendar\Support\Weekday;
+use Carbon\Carbon;
 use Closure;
+use DateTimeInterface;
 
 trait HasCalendarConfiguration
 {
@@ -33,6 +35,9 @@ trait HasCalendarConfiguration
 
     /** @var list<string>|Closure */
     protected array|Closure $disabledDates = [];
+
+    /** @var list<string>|Closure */
+    protected array|Closure $reservedDates = [];
 
     /** @var list<string|int>|Closure */
     protected array|Closure $weekEndDays = [];
@@ -245,9 +250,67 @@ trait HasCalendarConfiguration
      */
     public function getDisabledDates(): array
     {
-        $dates = $this->evaluate($this->disabledDates);
+        return $this->normalizeDateList($this->evaluate($this->disabledDates));
+    }
 
-        return array_values(is_array($dates) ? $dates : []);
+    /**
+     * Dates that are taken rather than closed: blocked like unavailable dates,
+     * but marked with their own icon so the reason reads differently.
+     *
+     * @param  list<string>|Closure  $dates
+     */
+    public function reservedDates(array|Closure $dates): static
+    {
+        $this->reservedDates = $dates;
+
+        return $this;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getReservedDates(): array
+    {
+        return $this->normalizeDateList($this->evaluate($this->reservedDates));
+    }
+
+    /**
+     * Reserved dates usually arrive as Carbon instances plucked off a model,
+     * so accept those alongside plain `Y-m-d` strings.
+     *
+     * @return list<string>
+     */
+    protected function normalizeDateList(mixed $dates): array
+    {
+        if (! is_array($dates)) {
+            return [];
+        }
+
+        $normalized = [];
+
+        foreach ($dates as $date) {
+            if ($date instanceof DateTimeInterface) {
+                $normalized[] = Carbon::instance($date)->toDateString();
+
+                continue;
+            }
+
+            if (! is_string($date) || blank($date)) {
+                continue;
+            }
+
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) === 1) {
+                $normalized[] = $date;
+
+                continue;
+            }
+
+            // ponytail: parse anything else through Carbon; unparseable values are dropped
+            // rather than fataling a whole panel render.
+            $normalized[] = rescue(fn (): string => Carbon::parse($date)->toDateString(), null, report: false);
+        }
+
+        return array_values(array_filter($normalized));
     }
 
     /**
