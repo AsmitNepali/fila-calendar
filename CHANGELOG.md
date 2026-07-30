@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-30
+
 ### Changed
 
 - A range drawn across reserved days now splits around them instead of covering them. Dragging from the 11th to the 19th over bookings on the 12th, 13th and 17th yields three ranges, so an already-booked day is never selected again, and the hover preview shows the same gaps while dragging. In `range` mode, where a single range cannot hold a gap, the selection stops at the booking and keeps the run of free days touching the day it started from. `unavailableDates()` and `weekEndDays()` are still spanned.
@@ -100,7 +102,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-month grid with responsive columns, date constraints, and weekend blocking.
 - Nuxt documentation site with GitHub Pages deployment.
 
-[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/AsmitNepali/fila-calendar/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.1.0...v0.2.0
