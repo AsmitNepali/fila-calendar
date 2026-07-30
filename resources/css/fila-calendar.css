@@ -390,8 +390,8 @@
    Two-class selector so the size wins over Filament's .fi-size-md on the svg. */
 .fi-calendar-day .fi-calendar-day__icon {
     position: absolute;
-    top: 0.1875rem;
-    right: 0.25rem;
+    top: 0.2rem;
+    right: 0.2rem;
     width: 0.625rem;
     height: 0.625rem;
     color: var(--fi-fila-calendar-reserved-color, var(--primary-500, rgb(19 102 131)));
@@ -399,8 +399,6 @@
 }
 
 .fi-fila-calendar--xs .fi-calendar-day .fi-calendar-day__icon {
-    top: 0.125rem;
-    right: 0.1875rem;
     width: 0.5625rem;
     height: 0.5625rem;
 }
