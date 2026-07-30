@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Past days inside a range rendered at full range color instead of the faded version added in 0.2.0. Two later rules in the stylesheet re-declared `--disabled.--in-range` and `--disabled.--range-end` without the fade, so only a range's start day read as past. Each of start, end and middle now fades its own color variable.
+
 ## [0.3.0] - 2026-07-30
 
 ### Added

@@ -514,9 +514,11 @@
     background: rgb(39 39 42);
 }
 
-/* Past days keep the range colors, faded, so old ranges read as past but stay identifiable */
+/* Past days keep their own range color, faded, so old ranges read as past but stay identifiable.
+   The fade comes from the color rather than opacity, which would dim the reserved marker too.
+   Start, end and middle each fade their matching variable, so a past range reads the same shape
+   as a live one. */
 .fi-calendar-day--disabled.fi-calendar-day--range-start,
-.fi-calendar-day--disabled.fi-calendar-day--range-end,
 .fi-calendar-day--disabled.fi-calendar-day--selected {
     opacity: 1;
     background: color-mix(in srgb, var(--fi-fila-calendar-range-start-bg, rgb(19 102 131)) 45%, transparent);
@@ -524,10 +526,20 @@
 }
 
 .dark .fi-calendar-day--disabled.fi-calendar-day--range-start,
-.dark .fi-calendar-day--disabled.fi-calendar-day--range-end,
 .dark .fi-calendar-day--disabled.fi-calendar-day--selected {
     background: color-mix(in srgb, var(--fi-fila-calendar-range-start-bg, rgb(24 116 144)) 45%, transparent);
     color: var(--fi-fila-calendar-range-start-color, white);
+}
+
+.fi-calendar-day--disabled.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
+    opacity: 1;
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-end-bg, rgb(19 102 131)) 45%, transparent);
+    color: var(--fi-fila-calendar-range-end-color, white);
+}
+
+.dark .fi-calendar-day--disabled.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-end-bg, rgb(24 116 144)) 45%, transparent);
+    color: var(--fi-fila-calendar-range-end-color, white);
 }
 
 .fi-calendar-day--disabled.fi-calendar-day--in-range {
@@ -538,26 +550,6 @@
 
 .dark .fi-calendar-day--disabled.fi-calendar-day--in-range {
     background: color-mix(in srgb, var(--fi-fila-calendar-range-middle-bg, rgb(24 116 144 / 0.28)) 45%, transparent);
-    color: var(--fi-fila-calendar-range-middle-color, rgb(186 230 253));
-}
-
-.fi-calendar-day--disabled.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
-    background: var(--fi-fila-calendar-range-end-bg, rgb(19 102 131));
-    color: var(--fi-fila-calendar-range-end-color, white);
-}
-
-.dark .fi-calendar-day--disabled.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
-    background: var(--fi-fila-calendar-range-end-bg, rgb(24 116 144));
-    color: var(--fi-fila-calendar-range-end-color, white);
-}
-
-.fi-calendar-day--disabled.fi-calendar-day--in-range {
-    background: var(--fi-fila-calendar-range-middle-bg, rgb(19 102 131 / 0.18));
-    color: var(--fi-fila-calendar-range-middle-color, rgb(19 102 131));
-}
-
-.dark .fi-calendar-day--disabled.fi-calendar-day--in-range {
-    background: var(--fi-fila-calendar-range-middle-bg, rgb(24 116 144 / 0.28));
     color: var(--fi-fila-calendar-range-middle-color, rgb(186 230 253));
 }
 
