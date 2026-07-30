@@ -378,33 +378,39 @@
     opacity: 1;
 }
 
-/* The marker sits against the right edge, vertically centred on the day number, so it reads
-   as a badge on the number rather than a shape floating in the rounded corner. Muted from the
-   day's own color, which keeps it legible on plain, selected and in-range days alike.
+/* A hairline ring gives the corner marker a cell to sit in. Without it the icon floats in the
+   empty space of an unfilled day; filled days already have their range color to anchor it. */
+.fi-fila-calendar .fi-calendar-day--reserved:not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end):not(.fi-calendar-day--in-range) {
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 22%, transparent);
+}
+
+/* Corner marker, kept quiet: small and mixed down from the day's own color so it annotates the
+   day instead of competing with the number. Mixing from currentColor means one rule covers
+   plain, selected, in-range and dark-mode days.
    Two-class selector so the size wins over Filament's .fi-size-md on the svg. */
 .fi-calendar-day .fi-calendar-day__icon {
     position: absolute;
-    top: 50%;
-    right: 0.1875rem;
+    top: 0.125rem;
+    right: 0.125rem;
     width: 0.625rem;
     height: 0.625rem;
-    transform: translateY(-50%);
-    color: color-mix(in oklab, currentColor 55%, transparent);
+    color: color-mix(in oklab, currentColor 45%, transparent);
     pointer-events: none;
 }
 
 .fi-fila-calendar--xs .fi-calendar-day .fi-calendar-day__icon {
-    right: 0.125rem;
+    top: 0.0625rem;
+    right: 0.0625rem;
     width: 0.5625rem;
     height: 0.5625rem;
 }
 
-/* Filled days carry the marker at higher contrast; 55% of white disappears into the range color. */
+/* Filled days need more of the glyph; 45% of white sinks into the range color. */
 .fi-calendar-day--selected .fi-calendar-day__icon,
 .fi-calendar-day--range-start .fi-calendar-day__icon,
 .fi-calendar-day--range-end .fi-calendar-day__icon,
 .fi-calendar-day--in-range .fi-calendar-day__icon {
-    color: color-mix(in oklab, currentColor 85%, transparent);
+    color: color-mix(in oklab, currentColor 80%, transparent);
 }
 
 .fi-calendar-day[aria-disabled='true']:not(:disabled) {
