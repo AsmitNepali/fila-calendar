@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-30
+
 ### Fixed
 
 - Past days inside a range rendered at full range color instead of the faded version added in 0.2.0. Two later rules in the stylesheet re-declared `--disabled.--in-range` and `--disabled.--range-end` without the fade, so only a range's start day read as past. Each of start, end and middle now fades its own color variable.
@@ -94,7 +96,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-month grid with responsive columns, date constraints, and weekend blocking.
 - Nuxt documentation site with GitHub Pages deployment.
 
-[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/AsmitNepali/fila-calendar/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.2...v0.1.0
