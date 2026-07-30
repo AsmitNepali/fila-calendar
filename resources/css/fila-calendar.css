@@ -417,7 +417,7 @@
 .fi-calendar-day .fi-calendar-day__icon {
     position: absolute;
     top: 0.2rem;
-    right: 0.2rem;
+    right: 0.3rem;
     width: 0.625rem;
     height: 0.625rem;
     color: var(--fi-fila-calendar-reserved-color, var(--primary-500, rgb(19 102 131)));
