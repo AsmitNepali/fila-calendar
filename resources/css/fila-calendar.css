@@ -378,19 +378,33 @@
     opacity: 1;
 }
 
-/* Two-class selector so the icon size wins over Filament's .fi-size-md on the svg. */
+/* The marker sits against the right edge, vertically centred on the day number, so it reads
+   as a badge on the number rather than a shape floating in the rounded corner. Muted from the
+   day's own color, which keeps it legible on plain, selected and in-range days alike.
+   Two-class selector so the size wins over Filament's .fi-size-md on the svg. */
 .fi-calendar-day .fi-calendar-day__icon {
     position: absolute;
-    top: 0.0625rem;
-    right: 0.0625rem;
-    width: 0.875rem;
-    height: 0.875rem;
+    top: 50%;
+    right: 0.1875rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    transform: translateY(-50%);
+    color: color-mix(in oklab, currentColor 55%, transparent);
     pointer-events: none;
 }
 
 .fi-fila-calendar--xs .fi-calendar-day .fi-calendar-day__icon {
-    width: 0.75rem;
-    height: 0.75rem;
+    right: 0.125rem;
+    width: 0.5625rem;
+    height: 0.5625rem;
+}
+
+/* Filled days carry the marker at higher contrast; 55% of white disappears into the range color. */
+.fi-calendar-day--selected .fi-calendar-day__icon,
+.fi-calendar-day--range-start .fi-calendar-day__icon,
+.fi-calendar-day--range-end .fi-calendar-day__icon,
+.fi-calendar-day--in-range .fi-calendar-day__icon {
+    color: color-mix(in oklab, currentColor 85%, transparent);
 }
 
 .fi-calendar-day[aria-disabled='true']:not(:disabled) {
