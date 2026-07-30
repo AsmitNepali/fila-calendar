@@ -39,6 +39,8 @@ trait HasCalendarConfiguration
     /** @var list<string>|Closure */
     protected array|Closure $reservedDates = [];
 
+    protected string|Closure $reservedIcon = 'heroicon-m-bookmark';
+
     /** @var list<string|int>|Closure */
     protected array|Closure $weekEndDays = [];
 
@@ -272,6 +274,20 @@ trait HasCalendarConfiguration
     public function getReservedDates(): array
     {
         return $this->normalizeDateList($this->evaluate($this->reservedDates));
+    }
+
+    public function reservedIcon(string|Closure $icon): static
+    {
+        $this->reservedIcon = $icon;
+
+        return $this;
+    }
+
+    public function getReservedIcon(): string
+    {
+        $icon = $this->evaluate($this->reservedIcon);
+
+        return is_string($icon) && filled($icon) ? $icon : 'heroicon-m-bookmark';
     }
 
     /**

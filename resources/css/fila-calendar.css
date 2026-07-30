@@ -371,29 +371,14 @@
     background: rgb(39 39 42);
 }
 
-/* Reserved: blocked like unavailable, but reads as "taken" rather than "closed".
-   Two-class selectors so a reserved day keeps its identity over the --disabled and
-   --week-end rules further down the file, and over Filament's .fi-size-md on the icon. */
+/* Reserved days keep whatever background they would otherwise have; only the icon marks
+   them. Opacity stays at 1 so the icon is still legible on days the --disabled rule dims. */
 .fi-fila-calendar .fi-calendar-day--reserved {
     cursor: not-allowed;
-    color: rgb(146 64 14);
-    background: rgb(254 243 199);
     opacity: 1;
 }
 
-.dark .fi-fila-calendar .fi-calendar-day--reserved {
-    color: rgb(253 230 138);
-    background: rgb(69 26 3);
-}
-
-.fi-fila-calendar .fi-calendar-day--reserved:hover {
-    background: rgb(254 243 199);
-}
-
-.dark .fi-fila-calendar .fi-calendar-day--reserved:hover {
-    background: rgb(69 26 3);
-}
-
+/* Two-class selector so the icon size wins over Filament's .fi-size-md on the svg. */
 .fi-calendar-day .fi-calendar-day__icon {
     position: absolute;
     top: 0.0625rem;

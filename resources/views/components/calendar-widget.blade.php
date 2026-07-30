@@ -160,7 +160,7 @@
 
                                 <template x-if="! day.placeholder && isReservedDate(day.date)">
                                     <x-filament::icon
-                                        icon="heroicon-m-lock-closed"
+                                        :icon="$getReservedIcon()"
                                         class="fi-calendar-day__icon"
                                         aria-label="{{ __('fila-calendar::calendar.reserved') }}"
                                     />
