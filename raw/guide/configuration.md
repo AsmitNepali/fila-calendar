@@ -324,7 +324,18 @@ All three block selection. They differ in what they tell the person looking at t
 - `reservedDates()` — open, but already taken by an existing booking. Keeps the day's normal background; marked with a hairline ring, a corner icon, and a `Reserved` tooltip. Days already filled by a range selection skip the ring, since the range color anchors the icon.
 - `weekEndDays()` — recurring blocked weekdays. Muted style.
 
-None of them can be clicked, so none can start or end a range. A range drawn over them stays one continuous range, and the blocked days inside it are highlighted as part of the range instead of showing the blocked style — reserved days keep their icon either way, so a booking conflict stays visible inside a range.
+None of them can be clicked, so none can start or end a range. They differ in what happens when a
+range is drawn *across* them:
+
+- `unavailableDates()` and `weekEndDays()` are spanned. The range stays continuous and those days
+are highlighted as part of it, because they describe rules about the calendar rather than days
+someone else already holds.
+- `reservedDates()` break the range. Dragging from the 11th to the 19th across bookings on the
+12th, 13th and 17th produces three ranges — 11th, 14th–16th and 18th–19th — so a booked day is
+never selected twice. The hover preview shows the same gaps while dragging.
+
+In `range` mode a single range cannot hold a gap, so the selection stops at the booking it runs
+into, keeping the run of free days that still touches the day the selection started from.
 
 The marker uses the panel's primary color on plain days and stays white on days filled by a range
 selection. Override the color per theme with `--fi-fila-calendar-reserved-color`:
