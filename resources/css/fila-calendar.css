@@ -488,6 +488,35 @@
     background-color: currentColor;
 }
 
+/* A blocked day that starts or ends a range keeps the range color, the blocked style only marks it */
+.fi-calendar-day--unavailable.fi-calendar-day--range-start,
+.fi-calendar-day--unavailable.fi-calendar-day--selected,
+.fi-calendar-day--week-end.fi-calendar-day--range-start,
+.fi-calendar-day--week-end.fi-calendar-day--selected {
+    background: var(--fi-fila-calendar-range-start-bg, rgb(19 102 131));
+    color: var(--fi-fila-calendar-range-start-color, white);
+}
+
+.dark .fi-calendar-day--unavailable.fi-calendar-day--range-start,
+.dark .fi-calendar-day--unavailable.fi-calendar-day--selected,
+.dark .fi-calendar-day--week-end.fi-calendar-day--range-start,
+.dark .fi-calendar-day--week-end.fi-calendar-day--selected {
+    background: var(--fi-fila-calendar-range-start-bg, rgb(24 116 144));
+    color: var(--fi-fila-calendar-range-start-color, white);
+}
+
+.fi-calendar-day--unavailable.fi-calendar-day--range-end:not(.fi-calendar-day--range-start),
+.fi-calendar-day--week-end.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
+    background: var(--fi-fila-calendar-range-end-bg, rgb(19 102 131));
+    color: var(--fi-fila-calendar-range-end-color, white);
+}
+
+.dark .fi-calendar-day--unavailable.fi-calendar-day--range-end:not(.fi-calendar-day--range-start),
+.dark .fi-calendar-day--week-end.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
+    background: var(--fi-fila-calendar-range-end-bg, rgb(24 116 144));
+    color: var(--fi-fila-calendar-range-end-color, white);
+}
+
 /* Blocked days are never interactive, so they take no hover or focus treatment */
 .fi-calendar-day--unavailable,
 .fi-calendar-day--week-end {
