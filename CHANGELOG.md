@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - A range drawn across reserved days now splits around them instead of covering them. Dragging from the 11th to the 19th over bookings on the 12th, 13th and 17th yields three ranges, so an already-booked day is never selected again, and the hover preview shows the same gaps while dragging. In `range` mode, where a single range cannot hold a gap, the selection stops at the booking and keeps the run of free days touching the day it started from. `unavailableDates()` and `weekEndDays()` are still spanned.
+- `reservedDates()` is UI-only again. Server-side reserved-day validation was removed from `CalendarInput`; host apps that need to reject reserved days on save should enforce that themselves.
 
 ## [0.3.1] - 2026-07-30
 
