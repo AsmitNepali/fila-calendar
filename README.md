@@ -13,8 +13,9 @@ A polished inline calendar field for Filament forms and infolists. Supports sing
 
 - **Multiple selection modes** — single, multiple, range, and multi-range
 - **Form + infolist** — `CalendarInput` field and read-only `CalendarEntry`
-- **Multi-month grid** — responsive columns with configurable month count
+- **Multi-month grid** — column count per breakpoint with configurable month count
 - **Date constraints** — unavailable dates, weekend blocking, and min/max bounds
+- **Reserved dates** — mark days that are already booked with their own icon and tooltip, enforced server-side
 - **Range hover preview** — visual feedback while selecting a range
 - **Smart range editing** — deselecting a middle day splits the range instead of clearing it
 - **Localization** — calendar labels via `->locale('ja')`
@@ -54,7 +55,8 @@ use Asmit\FilaCalendar\Support\CalendarMode;
 CalendarInput::make('booking')
     ->mode(CalendarMode::MultiRange)
     ->months(12)
-    ->calendarColumns(4)
+    ->calendarColumns(['sm' => 2, 'lg' => 3, 'xl' => 4])
+    ->reservedDates(fn (): array => Booking::query()->pluck('date')->all())
     ->withToday()
     ->locale('ja');
 ```

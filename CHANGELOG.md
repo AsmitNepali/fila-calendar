@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-30
+
+### Added
+
+- `reservedDates()` marks days that are already taken rather than closed. They block selection like unavailable dates, but keep the day's own background and carry a corner icon, a hairline ring in the primary color, and a `Reserved` tooltip, so "booked by someone else" no longer looks identical to "closed by a rule".
+- `reservedIcon()` sets the marker icon. Accepts a Filament `ScalableIcon` — every `Heroicon` enum case is one — or a plain icon name. Defaults to `Heroicon::Bookmark`.
+- `reservedTooltip()` overrides the tooltip text on reserved days, which also feeds the icon's `aria-label`. Pass an empty string to drop the tooltip and keep the icon.
+- `calendarColumns()` accepts a column count per breakpoint, e.g. `['sm' => 2, 'lg' => 3, 'xl' => 4]`. Keys are `default`, `sm`, `md`, `lg`, `xl` and `2xl` (`xxl` and `xs` are accepted as aliases), matching Tailwind's widths. Each value holds until a wider breakpoint overrides it, and counts are still clamped to `months()`.
+- `--fi-fila-calendar-reserved-color` CSS variable for theming the reserved ring and marker.
+- Server-side validation on `CalendarInput` rejecting a submission that lands on a reserved day, including one covered by a range. A crafted Livewire payload can no longer double-book. `unavailableDates()` and `weekEndDays()` stay UI-only, so records already sitting on those dates keep saving.
+
+### Fixed
+
+- `disabledDates()` and `unavailableDates()` silently produced no blocked days when given `Carbon` instances or datetime strings, such as a date column plucked off a model. Values are now normalized to `Y-m-d` on both the PHP and JavaScript sides, and unparseable entries are dropped instead of reaching the browser as `NaN`.
+
+### Changed
+
+- The `title` tooltip removed in 0.2.0 returns for reserved days only.
+
 ## [0.2.0] - 2026-07-29
 
 ### Changed
@@ -71,7 +90,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-month grid with responsive columns, date constraints, and weekend blocking.
 - Nuxt documentation site with GitHub Pages deployment.
 
-[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.2...v0.1.0
 [0.0.2]: https://github.com/AsmitNepali/fila-calendar/compare/v0.0.1...v0.0.2
