@@ -405,10 +405,9 @@ understands, so a column plucked straight off a model works:
 Use bounds for the window itself (`minDate()` / `maxDate()`) and `reservedDates()` for the taken
 days inside it.
 
-`reservedDates()` is also enforced server-side on `CalendarInput`: a submission that lands on a
-reserved day fails validation, even if the payload was crafted to bypass the UI, or the day was
-spanned by a range. `unavailableDates()` and `weekEndDays()` stay UI-only, so existing records
-sitting on those dates keep saving.
+`reservedDates()` is UI-only (same as `unavailableDates()` and `weekEndDays()`). Host apps that
+need to reject reserved days on save should add their own form rules or split ranges before
+hydrating state.
 
 ## Range colors
 
