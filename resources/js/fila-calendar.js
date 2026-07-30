@@ -423,6 +423,44 @@ export default function filaCalendar(config) {
             this.hoveredDate = null
         },
 
+        // Reserved days are already booked, so a new range must not cover them. Split the span
+        // into the runs of days that are still free. Unavailable and weekend days are not split
+        // out: those are rules about the calendar, not commitments someone else already holds.
+        segmentsExcludingReserved(start, end) {
+            const range = this.buildRange(start, end)
+
+            if (this.reservedDates.length === 0) {
+                return [range]
+            }
+
+            const segments = []
+            let segmentStart = null
+            let current = range.start
+
+            while (true) {
+                if (this.isReservedDate(current)) {
+                    if (segmentStart !== null) {
+                        segments.push({ start: segmentStart, end: addDays(current, -1) })
+                        segmentStart = null
+                    }
+                } else {
+                    segmentStart ??= current
+                }
+
+                if (current === range.end) {
+                    break
+                }
+
+                current = addDays(current, 1)
+            }
+
+            if (segmentStart !== null) {
+                segments.push({ start: segmentStart, end: range.end })
+            }
+
+            return segments
+        },
+
         getPendingHoverSegments() {
             const start = this.getPendingSelectionStart()
 
@@ -430,7 +468,7 @@ export default function filaCalendar(config) {
                 return []
             }
 
-            return [this.buildRange(start, this.hoveredDate)]
+            return this.segmentsExcludingReserved(start, this.hoveredDate)
         },
 
         getPendingHoverRole(date) {
@@ -581,7 +619,13 @@ export default function filaCalendar(config) {
                     return
                 }
 
-                this.state = this.buildRange(this.state.start, date)
+                // A single range cannot express a gap, so it stops at the booking: keep the run
+                // of free days that still touches the day the selection started from.
+                const segments = this.segmentsExcludingReserved(this.state.start, date)
+                const anchor = this.state.start
+
+                this.state = segments.find((segment) => anchor >= segment.start && anchor <= segment.end)
+                    ?? { start: anchor, end: anchor }
                 this.hoveredDate = null
 
                 return
@@ -619,7 +663,7 @@ export default function filaCalendar(config) {
 
                 this.state = this.mergeRanges([
                     ...this.getRanges(),
-                    this.buildRange(this.pendingRange.start, date),
+                    ...this.segmentsExcludingReserved(this.pendingRange.start, date),
                 ])
 
                 this.pendingRange = null

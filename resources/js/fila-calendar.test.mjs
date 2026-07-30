@@ -205,4 +205,89 @@ const multiRange = (state = []) => filaCalendar({ mode: 'multi-range', state })
     assert.equal(calendar.isReservedDate('2026-08-11'), true)
 }
 
+// A range drawn over reserved days splits around them instead of booking them twice.
+{
+    const calendar = filaCalendar({
+        mode: 'multi-range',
+        state: [],
+        reservedDates: ['2026-08-12', '2026-08-13', '2026-08-17'],
+    })
+
+    calendar.selectDate('2026-08-11')
+    calendar.selectDate('2026-08-19')
+
+    assert.deepEqual(calendar.state, [
+        { start: '2026-08-11', end: '2026-08-11' },
+        { start: '2026-08-14', end: '2026-08-16' },
+        { start: '2026-08-18', end: '2026-08-19' },
+    ])
+
+    // None of the reserved days ended up selected.
+    assert.equal(calendar.isSelected('2026-08-12'), false)
+    assert.equal(calendar.isSelected('2026-08-13'), false)
+    assert.equal(calendar.isSelected('2026-08-17'), false)
+}
+
+// Dragging backwards over a booking splits the same way.
+{
+    const calendar = filaCalendar({ mode: 'multi-range', state: [], reservedDates: ['2026-08-15'] })
+
+    calendar.selectDate('2026-08-18')
+    calendar.selectDate('2026-08-13')
+
+    assert.deepEqual(calendar.state, [
+        { start: '2026-08-13', end: '2026-08-14' },
+        { start: '2026-08-16', end: '2026-08-18' },
+    ])
+}
+
+// Unavailable and weekend days are still spanned; only reserved days break a range.
+{
+    const calendar = filaCalendar({
+        mode: 'multi-range',
+        state: [],
+        unavailableDates: ['2026-08-12'],
+        weekEndDays: [0, 6],
+    })
+
+    calendar.selectDate('2026-08-11')
+    calendar.selectDate('2026-08-14')
+
+    assert.deepEqual(calendar.state, [{ start: '2026-08-11', end: '2026-08-14' }])
+}
+
+// The drag preview shows the same gaps, so the split is visible before committing.
+{
+    const calendar = filaCalendar({ mode: 'multi-range', state: [], reservedDates: ['2026-08-13'] })
+
+    calendar.selectDate('2026-08-11')
+    calendar.setHoveredDate('2026-08-15')
+
+    const classesFor = (date) => calendar.dayClasses({ date, day: Number(date.slice(-2)), currentMonth: true, placeholder: false })
+
+    assert.ok(classesFor('2026-08-12').includes('fi-calendar-day--in-range-hover'))
+    assert.ok(! classesFor('2026-08-13').includes('fi-calendar-day--in-range-hover'))
+    assert.ok(classesFor('2026-08-14').includes('fi-calendar-day--in-range-hover'))
+}
+
+// A single range cannot hold a gap, so it stops before the booking it ran into.
+{
+    const calendar = filaCalendar({ mode: 'range', state: null, reservedDates: ['2026-08-14'] })
+
+    calendar.selectDate('2026-08-11')
+    calendar.selectDate('2026-08-19')
+
+    assert.deepEqual(calendar.state, { start: '2026-08-11', end: '2026-08-13' })
+}
+
+// Range mode dragging backwards keeps the run touching the day it started from.
+{
+    const calendar = filaCalendar({ mode: 'range', state: null, reservedDates: ['2026-08-14'] })
+
+    calendar.selectDate('2026-08-18')
+    calendar.selectDate('2026-08-11')
+
+    assert.deepEqual(calendar.state, { start: '2026-08-15', end: '2026-08-18' })
+}
+
 console.log('ok')
