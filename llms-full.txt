@@ -405,9 +405,9 @@ hydrating state.
 
 ## Range colors
 
-Override range selection colors from the host app theme by setting CSS variables on `.fi-fila-calendar` (or a parent). Defaults match the built-in teal palette.
+Selections, ranges, the today ring, and the reserved marker follow the panel's primary color out of the box, so a calendar matches an amber or rose panel with no CSS at all. The built-in amber palette — Filament's own default primary — is only the fallback for a calendar rendered outside a Filament panel.
 
-Use Filament's runtime palette variables (`--primary-500`, `--primary-600`, …) injected on `:root`. Do **not** use `--color-primary-500` here — that name is a Tailwind `@theme inline` alias for utility classes and is not available to arbitrary CSS.
+Override any of it from the host app theme by setting CSS variables on `.fi-fila-calendar` (or a parent):
 
 ```css
 .fi-fila-calendar {
@@ -418,10 +418,15 @@ Use Filament's runtime palette variables (`--primary-500`, `--primary-600`, …)
     --fi-fila-calendar-range-middle-bg: color-mix(in oklab, var(--primary-500) 18%, transparent);
     --fi-fila-calendar-range-middle-color: var(--primary-600);
     --fi-fila-calendar-range-middle-hover-bg: color-mix(in oklab, var(--primary-500) 28%, transparent);
+    --fi-fila-calendar-range-pending-ring: currentColor;
 }
 ```
 
-Single-day selections and range starts use the start variables. Range ends use the end variables. Days between the start and end use the middle variables.
+Use Filament's runtime palette variables (`--primary-500`, `--primary-600`, …) injected on `:root`. Do **not** use `--color-primary-500` here — that name is a Tailwind `@theme inline` alias for utility classes and is not available to arbitrary CSS.
+
+Single-day selections and range starts use the start variables. Range ends use the end variables. Days between the start and end use the middle variables. `--fi-fila-calendar-range-pending-ring` is the ring on a range's start day while it waits for the second click; it defaults to that day's text color so it stays legible on the range fill.
+
+A light primary color can leave the default white number hard to read on a filled day. Set `--fi-fila-calendar-range-start-color` and `--fi-fila-calendar-range-end-color` to a dark value in that case.
 
 Rebuild the Filament theme after changing host CSS (`npm run dev` or `npm run build`).
 
