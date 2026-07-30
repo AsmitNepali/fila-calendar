@@ -403,12 +403,13 @@
     height: 0.5625rem;
 }
 
-/* Filled days keep the white glyph, which reads better than the primary color on a range fill. */
+/* Filled days carry the glyph in the day's own text color, at full strength: white on a range
+   fill, and still legible on a theme whose in-range days stay light. */
 .fi-calendar-day--selected .fi-calendar-day__icon,
 .fi-calendar-day--range-start .fi-calendar-day__icon,
 .fi-calendar-day--range-end .fi-calendar-day__icon,
 .fi-calendar-day--in-range .fi-calendar-day__icon {
-    color: color-mix(in oklab, currentColor 80%, transparent);
+    color: currentColor;
 }
 
 .fi-calendar-day[aria-disabled='true']:not(:disabled) {
