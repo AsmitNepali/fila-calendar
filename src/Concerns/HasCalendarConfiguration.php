@@ -13,6 +13,9 @@ use Filament\Support\Icons\Heroicon;
 
 trait HasCalendarConfiguration
 {
+    /** Tailwind's breakpoint names, narrowest first; the stylesheet matches these widths. */
+    protected const CALENDAR_BREAKPOINTS = ['default', 'sm', 'md', 'lg', 'xl', '2xl'];
+
     protected int $months = 1;
 
     protected ?CalendarMode $mode = null;
@@ -23,7 +26,8 @@ trait HasCalendarConfiguration
 
     protected bool|Closure|null $scrollable = true;
 
-    protected int|Closure|null $calendarColumns = null;
+    /** @var int|array<string, int>|Closure|null */
+    protected int|array|Closure|null $calendarColumns = null;
 
     protected string|Closure|null $size = null;
 
@@ -111,7 +115,14 @@ trait HasCalendarConfiguration
         return $this;
     }
 
-    public function calendarColumns(int|Closure|null $columns): static
+    /**
+     * A single column count, or one per breakpoint:
+     * `->calendarColumns(['sm' => 2, 'lg' => 3])`. Recognised keys are `default`, `sm`, `md`,
+     * `lg`, `xl` and `2xl`; each breakpoint holds until the next one overrides it.
+     *
+     * @param  int|array<string, int>|Closure|null  $columns
+     */
+    public function calendarColumns(int|array|Closure|null $columns): static
     {
         $this->calendarColumns = $columns;
 
@@ -211,19 +222,73 @@ trait HasCalendarConfiguration
         return (bool) $this->evaluate($this->scrollable);
     }
 
-    public function getCalendarColumns(): int
+    /**
+     * Column count per breakpoint, narrowest first. Always holds at least a `default` entry.
+     *
+     * @return array<string, int>
+     */
+    public function getResolvedCalendarColumns(): array
     {
         $columns = $this->evaluate($this->calendarColumns);
 
-        if (is_int($columns) && $columns > 0) {
-            return min($columns, $this->months);
+        if (is_array($columns)) {
+            $resolved = [];
+
+            foreach (self::CALENDAR_BREAKPOINTS as $breakpoint) {
+                if (! array_key_exists($breakpoint, $columns) || ! is_numeric($columns[$breakpoint])) {
+                    continue;
+                }
+
+                $resolved[$breakpoint] = $this->clampCalendarColumns((int) $columns[$breakpoint]);
+            }
+
+            if ($resolved !== []) {
+                return $resolved;
+            }
         }
 
-        return match (true) {
+        if (is_numeric($columns) && (int) $columns > 0) {
+            return ['default' => $this->clampCalendarColumns((int) $columns)];
+        }
+
+        return ['default' => match (true) {
             $this->months <= 2 => 2,
             $this->months <= 6 => 3,
             default => 4,
-        };
+        }];
+    }
+
+    /**
+     * The narrowest configured column count, kept for callers that want a single number.
+     */
+    public function getCalendarColumns(): int
+    {
+        $resolved = $this->getResolvedCalendarColumns();
+
+        return $resolved['default'] ?? reset($resolved);
+    }
+
+    /**
+     * Inline custom properties the stylesheet reads at each breakpoint.
+     */
+    public function getCalendarColumnsStyle(): string
+    {
+        $declarations = [];
+
+        foreach ($this->getResolvedCalendarColumns() as $breakpoint => $columns) {
+            $property = $breakpoint === 'default'
+                ? '--fi-calendar-columns'
+                : "--fi-calendar-columns-{$breakpoint}";
+
+            $declarations[] = "{$property}: {$columns}";
+        }
+
+        return implode('; ', $declarations);
+    }
+
+    protected function clampCalendarColumns(int $columns): int
+    {
+        return max(1, min($columns, $this->months));
     }
 
     public function getSize(): ?string

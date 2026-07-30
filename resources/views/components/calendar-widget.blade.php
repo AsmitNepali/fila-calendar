@@ -20,7 +20,7 @@
         'fi-fila-calendar--readonly' => $readOnly,
         "fi-fila-calendar--{$getSize()}" => filled($getSize()),
     ])
-    style="--fi-calendar-columns: {{ $getCalendarColumns() }}"
+    style="{{ $getCalendarColumnsStyle() }}"
     @unless ($readOnly)
         wire:ignore
     @endunless

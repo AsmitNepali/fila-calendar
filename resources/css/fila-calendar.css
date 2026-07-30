@@ -61,10 +61,36 @@
     width: 100%;
 }
 
+/* Months stack below sm, then follow the column count set for the widest matching breakpoint.
+   Each var falls back to the next narrower one, so a single entry holds from there upwards. */
 @media (min-width: 640px) {
     .fi-fila-calendar__months {
         display: grid;
-        grid-template-columns: repeat(var(--fi-calendar-columns, 2), minmax(0, 1fr));
+        grid-template-columns: repeat(var(--fi-calendar-columns-sm, var(--fi-calendar-columns, 2)), minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 768px) {
+    .fi-fila-calendar__months {
+        grid-template-columns: repeat(var(--fi-calendar-columns-md, var(--fi-calendar-columns-sm, var(--fi-calendar-columns, 2))), minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .fi-fila-calendar__months {
+        grid-template-columns: repeat(var(--fi-calendar-columns-lg, var(--fi-calendar-columns-md, var(--fi-calendar-columns-sm, var(--fi-calendar-columns, 2)))), minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .fi-fila-calendar__months {
+        grid-template-columns: repeat(var(--fi-calendar-columns-xl, var(--fi-calendar-columns-lg, var(--fi-calendar-columns-md, var(--fi-calendar-columns-sm, var(--fi-calendar-columns, 2))))), minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1536px) {
+    .fi-fila-calendar__months {
+        grid-template-columns: repeat(var(--fi-calendar-columns-2xl, var(--fi-calendar-columns-xl, var(--fi-calendar-columns-lg, var(--fi-calendar-columns-md, var(--fi-calendar-columns-sm, var(--fi-calendar-columns, 2)))))), minmax(0, 1fr));
     }
 }
 
