@@ -48,6 +48,14 @@
         disabled: @js($disabled),
         initialDate: @js($initialDate),
         locale: @js($getLocale()),
+        weekStartsOn: @js($getWeekStartsOn()),
+        i18n: @js([
+            'selected' => __('fila-calendar::calendar.announcements.selected'),
+            'deselected' => __('fila-calendar::calendar.announcements.deselected'),
+            'range_started' => __('fila-calendar::calendar.announcements.range_started'),
+            'range_selected' => __('fila-calendar::calendar.announcements.range_selected'),
+            'cleared' => __('fila-calendar::calendar.announcements.cleared'),
+        ]),
     })"
 >
     <div class="fi-fila-calendar__toolbar">
@@ -127,6 +135,14 @@
         </div>
     </div>
 
+    <div
+        class="fi-fila-calendar__announcer"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        x-text="announcement"
+    ></div>
+
     <div class="fi-fila-calendar__viewport">
         <div class="fi-fila-calendar__months">
             <template x-for="(monthDate, monthIndex) in monthsToRender()" :key="monthIndex">
@@ -135,38 +151,62 @@
                         <span class="fi-fila-calendar__label" x-text="monthLabel(monthDate)"></span>
                     </header>
 
-                    <div class="fi-fila-calendar__weekdays">
-                        <template x-for="weekday in weekdayLabels" :key="weekday">
-                            <span class="fi-fila-calendar__weekday" x-text="weekday"></span>
-                        </template>
-                    </div>
-
                     <div
-                        class="fi-fila-calendar__days"
-                        x-on:mouseleave="clearHoveredDate()"
+                        class="fi-fila-calendar__grid"
+                        role="grid"
+                        x-bind:aria-label="monthLabel(monthDate)"
                     >
-                        <template x-for="day in calendarDays(monthDate)" :key="day.key">
-                            <button
-                                type="button"
-                                x-bind:class="day.placeholder ? 'fi-calendar-day fi-calendar-day--placeholder' : dayClasses(day, hoverRevision)"
-                                x-bind:disabled="day.placeholder || isInteractionBlocked(day.date)"
-                                x-bind:aria-hidden="day.placeholder ? 'true' : undefined"
-                                x-bind:tabindex="day.placeholder ? '-1' : undefined"
-                                x-bind:title="! day.placeholder && isReservedDate(day.date) ? @js($getReservedTooltip()) : null"
-                                x-on:click="! day.placeholder && selectDate(day.date, $event)"
-                                x-on:mouseenter="! day.placeholder && setHoveredDate(day.date)"
-                            >
-                                <span class="fi-calendar-day__number" x-text="day.placeholder ? '' : day.day"></span>
+                        <div class="fi-fila-calendar__weekdays" role="row">
+                            <template x-for="(weekday, weekdayIndex) in weekdayLabels" :key="weekday">
+                                <span
+                                    class="fi-fila-calendar__weekday"
+                                    role="columnheader"
+                                    x-bind:aria-label="weekdayLongLabels[weekdayIndex]"
+                                    x-text="weekday"
+                                ></span>
+                            </template>
+                        </div>
 
-                                <template x-if="! day.placeholder && isReservedDate(day.date)">
-                                    <x-filament::icon
-                                        :icon="$getReservedIcon()"
-                                        class="fi-calendar-day__icon"
-                                        aria-label="{{ $getReservedTooltip() ?? __('fila-calendar::calendar.reserved') }}"
-                                    />
-                                </template>
-                            </button>
-                        </template>
+                        <div
+                            class="fi-fila-calendar__days"
+                            role="rowgroup"
+                            x-on:mouseleave="clearHoveredDate()"
+                        >
+                            <template x-for="(week, weekIndex) in calendarWeeks(monthDate)" :key="weekIndex">
+                                <div class="fi-fila-calendar__week" role="row">
+                                    <template x-for="day in week" :key="day.key">
+                                        <button
+                                            type="button"
+                                            role="gridcell"
+                                            x-bind:class="day.placeholder ? 'fi-calendar-day fi-calendar-day--placeholder' : dayClasses(day, hoverRevision)"
+                                            x-bind:disabled="day.placeholder || isInteractionBlocked(day.date)"
+                                            x-bind:aria-hidden="day.placeholder ? 'true' : undefined"
+                                            x-bind:aria-selected="day.placeholder ? undefined : isSelected(day.date)"
+                                            x-bind:aria-current="! day.placeholder && isToday(day.date) ? 'date' : false"
+                                            x-bind:aria-label="day.placeholder ? undefined : dayLabel(day)"
+                                            x-bind:tabindex="day.placeholder ? '-1' : dayTabIndex(day)"
+                                            x-bind:title="! day.placeholder && isReservedDate(day.date) ? @js($getReservedTooltip()) : null"
+                                            x-bind:data-calendar-date="day.placeholder ? false : day.date"
+                                            x-bind:data-current-month="day.currentMonth"
+                                            x-on:click="! day.placeholder && selectDate(day.date, $event)"
+                                            x-on:keydown="! day.placeholder && onDayKeydown($event, day.date)"
+                                            x-on:focus="day.placeholder || (focusedDate = day.date)"
+                                            x-on:mouseenter="! day.placeholder && setHoveredDate(day.date)"
+                                        >
+                                            <span class="fi-calendar-day__number" x-text="day.placeholder ? '' : day.day"></span>
+
+                                            <template x-if="! day.placeholder && isReservedDate(day.date)">
+                                                <x-filament::icon
+                                                    :icon="$getReservedIcon()"
+                                                    class="fi-calendar-day__icon"
+                                                    aria-label="{{ $getReservedTooltip() ?? __('fila-calendar::calendar.reserved') }}"
+                                                />
+                                            </template>
+                                        </button>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
                     </div>
                 </section>
             </template>

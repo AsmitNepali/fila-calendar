@@ -93,17 +93,30 @@ export default function filaCalendar(config) {
         return toDateString(date)
     }
 
-    const buildWeekdayLabels = (locale) => {
+    const chunk = (items, size) => {
+        const chunks = []
+
+        for (let index = 0; index < items.length; index += size) {
+            chunks.push(items.slice(index, index + size))
+        }
+
+        return chunks
+    }
+
+    /**
+     * January 7th 2024 is a Sunday, so it doubles as the zero point for weekday indexes.
+     */
+    const buildWeekdayLabels = (locale, weekStartsOn, weekday = 'short') => {
         try {
-            const formatter = new Intl.DateTimeFormat(locale || undefined, { weekday: 'short' })
+            const formatter = new Intl.DateTimeFormat(locale || undefined, { weekday })
 
             return Array.from({ length: 7 }, (_, dayIndex) => {
-                const date = new Date(2024, 0, 7 + dayIndex)
-
-                return formatter.format(date)
+                return formatter.format(new Date(2024, 0, 7 + ((weekStartsOn + dayIndex) % 7)))
             })
         } catch {
-            return ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+            const fallback = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+
+            return Array.from({ length: 7 }, (_, dayIndex) => fallback[(weekStartsOn + dayIndex) % 7])
         }
     }
 
@@ -116,12 +129,16 @@ export default function filaCalendar(config) {
     }
 
     const anchor = resolveInitialAnchorDate()
+    const weekStartsOn = Number(config.weekStartsOn ?? 0) % 7
 
     return {
         state: resolveInitialState(),
         pendingRange: null,
         hoveredDate: null,
         hoverRevision: 0,
+        focusedDate: null,
+        announcement: '',
+        rtl: false,
         mode: config.mode ?? 'single',
         minDate: config.minDate ?? null,
         maxDate: config.maxDate ?? null,
@@ -136,16 +153,26 @@ export default function filaCalendar(config) {
         readOnly: config.readOnly ?? false,
         disabled: config.disabled ?? false,
         locale: config.locale ?? null,
+        i18n: config.i18n ?? {},
+        weekStartsOn,
         viewStart: new Date(anchor.getFullYear(), anchor.getMonth(), 1),
-        weekdayLabels: buildWeekdayLabels(config.locale),
+        weekdayLabels: buildWeekdayLabels(config.locale, weekStartsOn),
+        weekdayLongLabels: buildWeekdayLabels(config.locale, weekStartsOn, 'long'),
 
         init() {
+            this.rtl = getComputedStyle(this.$root).direction === 'rtl'
+            this.focusedDate = this.resolveInitialFocusedDate()
+
             this.$watch('hoveredDate', () => {
                 this.hoverRevision += 1
             })
 
             this.$watch('pendingRange', () => {
                 this.hoverRevision += 1
+            })
+
+            this.$watch('viewStart', () => {
+                this.focusedDate = this.clampToView(this.focusedDate)
             })
         },
 
@@ -174,7 +201,7 @@ export default function filaCalendar(config) {
             const year = monthDate.getFullYear()
             const month = monthDate.getMonth()
             const firstDay = new Date(year, month, 1)
-            const startOffset = firstDay.getDay()
+            const startOffset = (firstDay.getDay() - this.weekStartsOn + 7) % 7
             const totalDays = daysInMonth(year, month)
             const days = []
             const previousMonth = addMonths(monthDate, -1)
@@ -209,6 +236,23 @@ export default function filaCalendar(config) {
             }
 
             return days
+        },
+
+        calendarWeeks(monthDate) {
+            return chunk(this.calendarDays(monthDate), 7)
+        },
+
+        formatDate(date) {
+            try {
+                return parseDate(date).toLocaleDateString(this.locale || undefined, {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                })
+            } catch {
+                return date
+            }
         },
 
         getRanges() {
@@ -584,6 +628,255 @@ export default function filaCalendar(config) {
             return classes.join(' ')
         },
 
+        firstSelectedDate() {
+            if (this.mode === 'single' && typeof this.state === 'string') {
+                return this.state
+            }
+
+            if (this.mode === 'multiple' && Array.isArray(this.state)) {
+                return this.state[0] ?? null
+            }
+
+            if (this.mode === 'range') {
+                return this.state?.start ?? null
+            }
+
+            if (this.mode === 'multi-range' && Array.isArray(this.state)) {
+                return this.state[0]?.start ?? null
+            }
+
+            return null
+        },
+
+        resolveInitialFocusedDate() {
+            const candidate = this.firstSelectedDate() ?? toDateString(new Date())
+
+            return this.clampToView(this.nextFocusableDate(candidate, 1) ?? candidate)
+        },
+
+        clampToBounds(date) {
+            if (this.disabled) {
+                return null
+            }
+
+            if (this.minDate && date < this.minDate) {
+                return this.minDate
+            }
+
+            if (this.maxDate && date > this.maxDate) {
+                return this.maxDate
+            }
+
+            return date
+        },
+
+        clampToView(date) {
+            const months = this.monthsToRender()
+            const first = months[0]
+            const last = months[months.length - 1]
+            const firstDate = toDateString(first)
+            const lastDate = toDateString(new Date(last.getFullYear(), last.getMonth(), daysInMonth(last.getFullYear(), last.getMonth())))
+
+            if (date && date >= firstDate && date <= lastDate) {
+                return date
+            }
+
+            return this.nextFocusableDate(firstDate, 1) ?? firstDate
+        },
+
+        ensureDateIsVisible(date) {
+            const target = parseDate(date)
+            const monthOffset = (target.getFullYear() - this.viewStart.getFullYear()) * 12
+                + (target.getMonth() - this.viewStart.getMonth())
+
+            if (monthOffset < 0) {
+                this.viewStart = new Date(target.getFullYear(), target.getMonth(), 1)
+
+                return
+            }
+
+            if (monthOffset > this.months - 1) {
+                this.viewStart = addMonths(new Date(target.getFullYear(), target.getMonth(), 1), -(this.months - 1))
+            }
+        },
+
+        startOfWeek(date) {
+            return addDays(date, -((parseDate(date).getDay() - this.weekStartsOn + 7) % 7))
+        },
+
+        shiftByMonths(date, count) {
+            const parsed = parseDate(date)
+            const target = new Date(parsed.getFullYear(), parsed.getMonth() + count, 1)
+            const day = Math.min(parsed.getDate(), daysInMonth(target.getFullYear(), target.getMonth()))
+
+            return toDateString(new Date(target.getFullYear(), target.getMonth(), day))
+        },
+
+        dateForKey(key, date, shiftKey = false) {
+            const inlineStep = this.rtl ? -1 : 1
+
+            switch (key) {
+                case 'ArrowRight':
+                    return addDays(date, inlineStep)
+                case 'ArrowLeft':
+                    return addDays(date, -inlineStep)
+                case 'ArrowUp':
+                    return addDays(date, -7)
+                case 'ArrowDown':
+                    return addDays(date, 7)
+                case 'Home':
+                    return this.startOfWeek(date)
+                case 'End':
+                    return addDays(this.startOfWeek(date), 6)
+                case 'PageUp':
+                    return this.shiftByMonths(date, shiftKey ? -12 : -1)
+                case 'PageDown':
+                    return this.shiftByMonths(date, shiftKey ? 12 : 1)
+                default:
+                    return null
+            }
+        },
+
+        focusedDateIsInRenderedMonths() {
+            if (! this.focusedDate) {
+                return false
+            }
+
+            const target = parseDate(this.focusedDate)
+            const monthOffset = (target.getFullYear() - this.viewStart.getFullYear()) * 12
+                + (target.getMonth() - this.viewStart.getMonth())
+
+            return monthOffset >= 0 && monthOffset <= this.months - 1
+        },
+
+        /**
+         * Roving tabindex: the grid keeps a single tab stop, on the focused day.
+         */
+        dayTabIndex(day) {
+            if (day.date !== this.focusedDate) {
+                return -1
+            }
+
+            return day.currentMonth || ! this.focusedDateIsInRenderedMonths() ? 0 : -1
+        },
+
+        dayLabel(day) {
+            return this.formatDate(day.date)
+        },
+
+        /**
+         * Blocked days are natively disabled, so they cannot hold focus: keep walking in the
+         * direction of travel until a day can, or until the bounds stop us.
+         */
+        focusStepForKey(key) {
+            return ['ArrowLeft', 'ArrowUp', 'Home', 'PageUp'].includes(key) ? -1 : 1
+        },
+
+        nextFocusableDate(date, step) {
+            let candidate = this.clampToBounds(date)
+
+            if (candidate === null) {
+                return null
+            }
+
+            for (let index = 0; index <= 366; index += 1) {
+                if (! this.isInteractionBlocked(candidate)) {
+                    return candidate
+                }
+
+                const next = this.clampToBounds(addDays(candidate, step))
+
+                if (next === null || next === candidate) {
+                    return null
+                }
+
+                candidate = next
+            }
+
+            return null
+        },
+
+        onDayKeydown(event, date) {
+            const target = this.dateForKey(event.key, date, event.shiftKey)
+
+            if (target === null) {
+                return
+            }
+
+            event.preventDefault()
+
+            const extendsSelection = event.shiftKey
+                && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)
+
+            this.moveFocus(
+                this.nextFocusableDate(target, this.focusStepForKey(event.key)),
+                extendsSelection ? date : null,
+            )
+        },
+
+        moveFocus(date, extendFrom = null) {
+            const target = date === null ? null : this.clampToBounds(date)
+
+            if (target === null) {
+                return
+            }
+
+            if (extendFrom !== null) {
+                this.extendSelectionTo(target, extendFrom)
+            }
+
+            this.focusedDate = target
+            this.ensureDateIsVisible(target)
+
+            this.$nextTick(() => this.focusDayElement(target))
+        },
+
+        focusDayElement(date) {
+            const root = this.$root
+            const element = root?.querySelector(`[data-calendar-date="${date}"][data-current-month]`)
+                ?? root?.querySelector(`[data-calendar-date="${date}"]`)
+
+            element?.focus()
+        },
+
+        /**
+         * Shift + arrow keys preview the range; the pending selection is committed
+         * by activating the focused day with Enter or Space.
+         */
+        extendSelectionTo(date, origin) {
+            if (this.readOnly || this.disabled) {
+                return
+            }
+
+            if (this.mode !== 'range' && this.mode !== 'multi-range') {
+                return
+            }
+
+            if (this.getPendingSelectionStart() === null) {
+                this.selectDate(origin)
+
+                if (this.getPendingSelectionStart() === null) {
+                    return
+                }
+            }
+
+            if (this.isInteractionBlocked(date)) {
+                return
+            }
+
+            this.hoveredDate = date
+        },
+
+        announce(key, replacements = {}) {
+            let message = this.i18n?.[key] ?? ''
+
+            for (const [token, value] of Object.entries(replacements)) {
+                message = message.replaceAll(`:${token}`, value)
+            }
+
+            this.announcement = message
+        },
+
         selectDate(date, event = null) {
             if (this.readOnly || this.isInteractionBlocked(date)) {
                 return
@@ -591,6 +884,7 @@ export default function filaCalendar(config) {
 
             if (this.mode === 'single') {
                 this.state = this.state === date ? null : date
+                this.announce(this.state === null ? 'deselected' : 'selected', { date: this.formatDate(date) })
 
                 return
             }
@@ -601,8 +895,10 @@ export default function filaCalendar(config) {
 
                 if (index >= 0) {
                     dates.splice(index, 1)
+                    this.announce('deselected', { date: this.formatDate(date) })
                 } else {
                     dates.push(date)
+                    this.announce('selected', { date: this.formatDate(date) })
                 }
 
                 dates.sort()
@@ -615,6 +911,7 @@ export default function filaCalendar(config) {
                 if (! this.state?.start || (this.state.start && this.state.end)) {
                     this.state = { start: date, end: null }
                     this.hoveredDate = null
+                    this.announce('range_started', { date: this.formatDate(date) })
 
                     return
                 }
@@ -627,6 +924,7 @@ export default function filaCalendar(config) {
                 this.state = segments.find((segment) => anchor >= segment.start && anchor <= segment.end)
                     ?? { start: anchor, end: anchor }
                 this.hoveredDate = null
+                this.announceRange(this.state)
 
                 return
             }
@@ -650,6 +948,7 @@ export default function filaCalendar(config) {
 
                     this.pendingRange = null
                     this.hoveredDate = null
+                    this.announce('deselected', { date: this.formatDate(date) })
 
                     return
                 }
@@ -657,18 +956,35 @@ export default function filaCalendar(config) {
                 if (! this.pendingRange?.start || this.pendingRange.end) {
                     this.pendingRange = { start: date, end: null }
                     this.hoveredDate = null
+                    this.announce('range_started', { date: this.formatDate(date) })
 
                     return
                 }
 
+                const newRanges = this.segmentsExcludingReserved(this.pendingRange.start, date)
+
                 this.state = this.mergeRanges([
                     ...this.getRanges(),
-                    ...this.segmentsExcludingReserved(this.pendingRange.start, date),
+                    ...newRanges,
                 ])
 
                 this.pendingRange = null
                 this.hoveredDate = null
+                this.announceRange(newRanges[newRanges.length - 1] ?? null)
             }
+        },
+
+        announceRange(range) {
+            if (! range?.start || ! range?.end) {
+                this.announce('cleared')
+
+                return
+            }
+
+            this.announce('range_selected', {
+                start: this.formatDate(range.start),
+                end: this.formatDate(range.end),
+            })
         },
 
         previousMonth() {

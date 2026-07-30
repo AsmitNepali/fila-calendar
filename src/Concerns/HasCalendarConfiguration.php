@@ -54,6 +54,24 @@ trait HasCalendarConfiguration
 
     protected string|Closure|null $locale = null;
 
+    protected Weekday|int|string|Closure|null $weekStartsOn = null;
+
+    public function weekStartsOn(Weekday|int|string|Closure|null $day): static
+    {
+        $this->weekStartsOn = $day;
+
+        return $this;
+    }
+
+    /**
+     * The first column of the calendar grid, as an `Intl`-style index (0 = Sunday).
+     */
+    public function getWeekStartsOn(): int
+    {
+        return Weekday::normalize($this->evaluate($this->weekStartsOn))
+            ?? Weekday::firstDayForLocale($this->getResolvedLocale());
+    }
+
     public function locale(string|Closure|null $locale): static
     {
         $this->locale = $locale;
