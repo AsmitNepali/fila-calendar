@@ -290,4 +290,167 @@ const multiRange = (state = []) => filaCalendar({ mode: 'multi-range', state })
     assert.deepEqual(calendar.state, { start: '2026-08-15', end: '2026-08-18' })
 }
 
+const keyboard = (config = {}) => filaCalendar({
+    state: null,
+    mode: 'single',
+    locale: 'en-US',
+    initialDate: '2026-03-15',
+    ...config,
+})
+
+// Weeks start on Sunday unless a locale-derived week start says otherwise.
+{
+    const calendar = keyboard()
+    const days = calendar.calendarDays(new Date(2026, 2, 1))
+
+    assert.ok(calendar.weekdayLabels[0].startsWith('Su'))
+    assert.equal(days[0].date, '2026-03-01')
+    assert.equal(days[0].currentMonth, true)
+}
+
+// 2026-03-01 is a Sunday, so a Monday-first grid shows the whole previous week.
+{
+    const calendar = keyboard({ weekStartsOn: 1 })
+    const days = calendar.calendarDays(new Date(2026, 2, 1))
+
+    assert.ok(calendar.weekdayLabels[0].startsWith('Mo'))
+    assert.ok(calendar.weekdayLabels[6].startsWith('Su'))
+    assert.equal(days[0].date, '2026-02-23')
+    assert.equal(days[6].date, '2026-03-01')
+}
+
+// A Saturday-first locale leads with the previous Saturday.
+{
+    assert.equal(
+        keyboard({ weekStartsOn: 6, locale: 'ar' }).calendarDays(new Date(2026, 2, 1))[0].date,
+        '2026-02-28',
+    )
+}
+
+// Every rendered week holds seven cells, whatever the week start.
+{
+    const weeks = keyboard({ weekStartsOn: 1 }).calendarWeeks(new Date(2026, 1, 1))
+
+    assert.ok(weeks.length >= 4)
+    weeks.forEach((week) => assert.equal(week.length, 7))
+}
+
+// Arrow keys move by day and by week; unhandled keys are left alone.
+{
+    const calendar = keyboard()
+
+    assert.equal(calendar.dateForKey('ArrowRight', '2026-03-15'), '2026-03-16')
+    assert.equal(calendar.dateForKey('ArrowLeft', '2026-03-15'), '2026-03-14')
+    assert.equal(calendar.dateForKey('ArrowDown', '2026-03-15'), '2026-03-22')
+    assert.equal(calendar.dateForKey('ArrowUp', '2026-03-15'), '2026-03-08')
+    assert.equal(calendar.dateForKey('Backspace', '2026-03-15'), null)
+}
+
+// The inline axis follows the panel direction.
+{
+    const calendar = keyboard()
+    calendar.rtl = true
+
+    assert.equal(calendar.dateForKey('ArrowRight', '2026-03-15'), '2026-03-14')
+    assert.equal(calendar.dateForKey('ArrowLeft', '2026-03-15'), '2026-03-16')
+    assert.equal(calendar.dateForKey('ArrowDown', '2026-03-15'), '2026-03-22')
+}
+
+// Home and End land on the week edges, which move with the week start.
+{
+    const sundayFirst = keyboard()
+    const mondayFirst = keyboard({ weekStartsOn: 1 })
+
+    assert.equal(sundayFirst.dateForKey('Home', '2026-03-18'), '2026-03-15')
+    assert.equal(sundayFirst.dateForKey('End', '2026-03-18'), '2026-03-21')
+    assert.equal(mondayFirst.dateForKey('Home', '2026-03-18'), '2026-03-16')
+    assert.equal(mondayFirst.dateForKey('End', '2026-03-18'), '2026-03-22')
+}
+
+// Page keys move by month, or by year with shift, clamping in shorter months.
+{
+    const calendar = keyboard()
+
+    assert.equal(calendar.dateForKey('PageUp', '2026-03-15'), '2026-02-15')
+    assert.equal(calendar.dateForKey('PageDown', '2026-03-15'), '2026-04-15')
+    assert.equal(calendar.dateForKey('PageUp', '2026-03-15', true), '2025-03-15')
+    assert.equal(calendar.dateForKey('PageDown', '2026-03-15', true), '2027-03-15')
+    assert.equal(calendar.dateForKey('PageUp', '2026-03-31'), '2026-02-28')
+}
+
+// Focus is clamped to the allowed bounds, and a disabled calendar takes none.
+{
+    const calendar = keyboard({ minDate: '2026-03-10', maxDate: '2026-03-20' })
+
+    assert.equal(calendar.clampToBounds('2026-03-01'), '2026-03-10')
+    assert.equal(calendar.clampToBounds('2026-03-25'), '2026-03-20')
+    assert.equal(calendar.clampToBounds('2026-03-15'), '2026-03-15')
+    assert.equal(keyboard({ disabled: true }).clampToBounds('2026-03-15'), null)
+}
+
+// Blocked days cannot hold focus, so travel continues past them.
+{
+    const calendar = keyboard({ disabledDates: ['2026-03-16', '2026-03-17'] })
+
+    assert.equal(calendar.nextFocusableDate('2026-03-16', 1), '2026-03-18')
+    assert.equal(calendar.nextFocusableDate('2026-03-17', -1), '2026-03-15')
+    assert.equal(calendar.focusStepForKey('ArrowUp'), -1)
+    assert.equal(calendar.focusStepForKey('ArrowRight'), 1)
+
+    // Nothing focusable before the minimum, so the walk gives up rather than looping.
+    const walled = keyboard({ minDate: '2026-03-16', disabledDates: ['2026-03-16'] })
+    assert.equal(walled.nextFocusableDate('2026-03-16', -1), null)
+}
+
+// The grid keeps one tab stop, wherever the focused day is rendered.
+{
+    const calendar = keyboard({ months: 2 })
+    calendar.focusedDate = '2026-03-15'
+
+    const tabStops = calendar
+        .monthsToRender()
+        .flatMap((month) => calendar.calendarDays(month))
+        .filter((day) => calendar.dayTabIndex(day) === 0)
+
+    assert.equal(tabStops.length, 1)
+    assert.equal(tabStops[0].date, '2026-03-15')
+    assert.equal(calendar.clampToView('2027-01-01'), '2026-03-01')
+}
+
+// The view scrolls only as far as it must to reveal a newly focused date.
+{
+    const calendar = keyboard({ months: 2 })
+
+    calendar.ensureDateIsVisible('2026-05-04')
+    assert.equal(calendar.viewStart.getMonth(), 3)
+
+    calendar.ensureDateIsVisible('2026-01-04')
+    assert.equal(calendar.viewStart.getMonth(), 0)
+}
+
+// Selections are announced with the localised date.
+{
+    const calendar = keyboard({
+        i18n: { selected: ':date selected.', deselected: ':date deselected.' },
+    })
+
+    calendar.selectDate('2026-03-15')
+    assert.match(calendar.announcement, /March 15, 2026 selected\./)
+
+    calendar.selectDate('2026-03-15')
+    assert.match(calendar.announcement, /March 15, 2026 deselected\./)
+}
+
+// Shift + arrows open a range from the focused day and preview it; Enter commits.
+{
+    const calendar = keyboard({ mode: 'range', i18n: {} })
+
+    calendar.extendSelectionTo('2026-03-18', '2026-03-15')
+    assert.deepEqual(calendar.state, { start: '2026-03-15', end: null })
+    assert.equal(calendar.hoveredDate, '2026-03-18')
+
+    calendar.selectDate('2026-03-18')
+    assert.deepEqual(calendar.state, { start: '2026-03-15', end: '2026-03-18' })
+}
+
 console.log('ok')
