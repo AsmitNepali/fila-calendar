@@ -232,14 +232,28 @@ trait HasCalendarConfiguration
         $columns = $this->evaluate($this->calendarColumns);
 
         if (is_array($columns)) {
+            $given = [];
+
+            foreach ($columns as $breakpoint => $value) {
+                // 'xxl' and 'xs' are easy to reach for; treat them as their canonical names
+                // rather than dropping the entry without a word.
+                $breakpoint = match (strtolower((string) $breakpoint)) {
+                    'xxl' => '2xl',
+                    'xs' => 'default',
+                    default => strtolower((string) $breakpoint),
+                };
+
+                $given[$breakpoint] = $value;
+            }
+
             $resolved = [];
 
             foreach (self::CALENDAR_BREAKPOINTS as $breakpoint) {
-                if (! array_key_exists($breakpoint, $columns) || ! is_numeric($columns[$breakpoint])) {
+                if (! array_key_exists($breakpoint, $given) || ! is_numeric($given[$breakpoint])) {
                     continue;
                 }
 
-                $resolved[$breakpoint] = $this->clampCalendarColumns((int) $columns[$breakpoint]);
+                $resolved[$breakpoint] = $this->clampCalendarColumns((int) $given[$breakpoint]);
             }
 
             if ($resolved !== []) {
