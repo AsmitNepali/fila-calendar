@@ -8,8 +8,9 @@
 
 - Single, range, multiple, and multi-range selection
 - Form field (`CalendarInput`) and read-only infolist entry (`CalendarEntry`)
-- Multi-month grid with responsive columns
+- Multi-month grid with a column count per breakpoint
 - Unavailable dates, weekend blocking, and min/max bounds
+- Reserved dates for days already taken, marked with their own icon and enforced server-side
 - Range hover preview while selecting
 - Middle-day deselect splits a range instead of clearing it
 - Locale support via `->locale('ja')`
@@ -30,7 +31,7 @@ use Asmit\FilaCalendar\Support\CalendarMode;
 CalendarInput::make('available_dates')
     ->mode(CalendarMode::MultiRange)
     ->months(3)
-    ->calendarColumns(3)
+    ->calendarColumns(['sm' => 2, 'lg' => 3])
     ->withToday()
     ->minDate(now()->toDateString());
 ```

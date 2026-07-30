@@ -19,6 +19,7 @@ CalendarInput::make('dates')
     ->minDate(now()->toDateString())
     ->maxDate(now()->addYear()->toDateString())
     ->unavailableDates(['2026-07-15', '2026-07-20'])
+    ->reservedDates(['2026-07-26', '2026-07-27'])
     ->weekEndDays(['sat', 'sun'])
     ->locale('ja');
 ```
@@ -85,7 +86,7 @@ CalendarInput::make('dates')
     </td>
     
     <td>
-      Grid columns on wide screens
+      Grid columns — a number, or one per breakpoint
     </td>
   </tr>
   
@@ -190,6 +191,54 @@ CalendarInput::make('dates')
   <tr>
     <td>
       <code>
+        reservedDates()
+      </code>
+    </td>
+    
+    <td>
+      Dates already taken — blocked, marked with an icon
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        reservedIcon()
+      </code>
+    </td>
+    
+    <td>
+      Icon for reserved days — <code>
+        ScalableIcon
+      </code>
+      
+       or icon name (default: <code>
+        Heroicon::Bookmark
+      </code>
+      
+      )
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        reservedTooltip()
+      </code>
+    </td>
+    
+    <td>
+      Tooltip on reserved days (default: translated <code>
+        Reserved
+      </code>
+      
+      )
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
         weekEndDays()
       </code>
     </td>
@@ -229,6 +278,33 @@ CalendarInput::make('dates')
 </tbody>
 </table>
 
+## Responsive columns
+
+`calendarColumns()` takes a single number, or one per breakpoint:
+
+```php
+CalendarInput::make('dates')
+    ->months(12)
+    ->calendarColumns([
+        'sm' => 2,
+        'lg' => 3,
+        'xl' => 4,
+    ]);
+```
+
+Keys are `default`, `sm`, `md`, `lg`, `xl` and `2xl`, matching Tailwind's widths (640px, 768px,
+1024px, 1280px, 1536px). `xxl` is accepted as an alias for `2xl`, and `xs` for `default`. Each value holds until a wider breakpoint overrides it, so the example
+above renders 2 columns from 640px, 3 from 1024px and 4 from 1280px. Below 640px the months always
+stack in a single column, so a phone gets one month at a time whatever you configure.
+
+A column count is never allowed to exceed `months()`, and closures are supported:
+
+```php
+->calendarColumns(fn (): array => $this->isCompact() ? ['sm' => 1] : ['sm' => 2, 'lg' => 4])
+```
+
+Omit the option to get the default: 2 columns for up to 2 months, 3 for up to 6, otherwise 4.
+
 ## Adjacent month days
 
 By default the first and last week of a month are padded with days from the previous and next month. Pass `hideAdjacentMonths()` (or `showAdjacentMonths(false)`) to drop them:
@@ -240,12 +316,88 @@ CalendarInput::make('dates')
 
 The padding cells stay in the grid so every month keeps its seven columns, but they render empty: not clickable, not focusable, and never hovered or selected.
 
-## Unavailable vs weekend
+## Unavailable vs reserved vs weekend
 
-- `unavailableDates()` marks specific dates with a strikethrough style.
-- `weekEndDays()` blocks recurring weekdays with a muted style.
+All three block selection. They differ in what they tell the person looking at the calendar:
 
-Neither can be clicked, so neither can start or end a range. A range drawn over them stays one continuous range, and the blocked days inside it are highlighted as part of the range instead of showing the blocked style.
+- `unavailableDates()` — closed by a rule. Strikethrough style.
+- `reservedDates()` — open, but already taken by an existing booking. Keeps the day's normal background; marked with a hairline ring, a corner icon, and a `Reserved` tooltip. Days already filled by a range selection skip the ring, since the range color anchors the icon.
+- `weekEndDays()` — recurring blocked weekdays. Muted style.
+
+None of them can be clicked, so none can start or end a range. A range drawn over them stays one continuous range, and the blocked days inside it are highlighted as part of the range instead of showing the blocked style — reserved days keep their icon either way, so a booking conflict stays visible inside a range.
+
+The marker uses the panel's primary color on plain days and stays white on days filled by a range
+selection. Override the color per theme with `--fi-fila-calendar-reserved-color`:
+
+```css
+.fi-fila-calendar {
+    --fi-fila-calendar-reserved-color: var(--danger-500);
+}
+```
+
+### Choosing the icon
+
+The icon defaults to `Heroicon::Bookmark`. Pass a `ScalableIcon` — every case of Filament's
+`Heroicon` enum is one — and Filament picks the variant that fits the rendered size:
+
+```php
+use Asmit\FilaCalendar\Forms\Components\CalendarInput;
+use Filament\Support\Icons\Heroicon;
+
+CalendarInput::make('availabilities')
+    ->reservedDates(['2026-08-11', '2026-08-12'])
+    ->reservedIcon(Heroicon::EllipsisHorizontal);
+```
+
+Plain icon names still work, for icon sets that have no enum:
+
+```php
+->reservedIcon('heroicon-m-lock-closed')
+```
+
+Closures work for both, so the icon can follow the record:
+
+```php
+->reservedIcon(fn (): Heroicon => $this->getRecord()->isProvisional()
+    ? Heroicon::Clock
+    : Heroicon::LockClosed)
+```
+
+### Tooltip
+
+Reserved days carry a `Reserved` tooltip, also used as the icon's `aria-label`. Override the text
+with `reservedTooltip()`:
+
+```php
+CalendarInput::make('availabilities')
+    ->reservedDates($dates)
+    ->reservedTooltip('Booked by another job');
+```
+
+It accepts a closure as well. Pass an empty string to drop the tooltip and keep the icon; the
+`aria-label` falls back to the translated `Reserved` label so the marker stays announced:
+
+```php
+->reservedTooltip('')
+```
+
+`reservedDates()` accepts `Y-m-d` strings, `Carbon` instances, or anything else `Carbon::parse()`
+understands, so a column plucked straight off a model works:
+
+```php
+->reservedDates(fn (): array => Booking::query()
+    ->whereBetween('date', [$availableFrom, $availableTo])
+    ->pluck('date')
+    ->all())
+```
+
+Use bounds for the window itself (`minDate()` / `maxDate()`) and `reservedDates()` for the taken
+days inside it.
+
+`reservedDates()` is also enforced server-side on `CalendarInput`: a submission that lands on a
+reserved day fails validation, even if the payload was crafted to bypass the UI, or the day was
+spanned by a range. `unavailableDates()` and `weekEndDays()` stay UI-only, so existing records
+sitting on those dates keep saving.
 
 ## Range colors
 

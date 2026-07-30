@@ -133,7 +133,7 @@ CalendarEntry::make('dates')
     </td>
     
     <td>
-      Removes the whole range
+      Shrinks the range by that day
     </td>
   </tr>
   
@@ -156,7 +156,17 @@ CalendarEntry::make('dates')
       Removes that day
     </td>
   </tr>
+  
+  <tr>
+    <td>
+      Shift-click any day of a range
+    </td>
+    
+    <td>
+      Clears the whole range, keeping the blocked days inside it
+    </td>
+  </tr>
 </tbody>
 </table>
 
-Example: range `1–10`, click day `5` → `1–4` and `6–10`.
+Example: range `1–10`, click day `5` → `1–4` and `6–10`. Click day `1` → `2–10`.
