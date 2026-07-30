@@ -8,6 +8,8 @@ use Asmit\FilaCalendar\Support\Weekday;
 use Carbon\Carbon;
 use Closure;
 use DateTimeInterface;
+use Filament\Support\Contracts\ScalableIcon;
+use Filament\Support\Icons\Heroicon;
 
 trait HasCalendarConfiguration
 {
@@ -39,7 +41,9 @@ trait HasCalendarConfiguration
     /** @var list<string>|Closure */
     protected array|Closure $reservedDates = [];
 
-    protected string|Closure $reservedIcon = 'heroicon-m-bookmark';
+    protected string|ScalableIcon|Closure $reservedIcon = Heroicon::Bookmark;
+
+    protected string|Closure|null $reservedTooltip = null;
 
     /** @var list<string|int>|Closure */
     protected array|Closure $weekEndDays = [];
@@ -276,18 +280,44 @@ trait HasCalendarConfiguration
         return $this->normalizeDateList($this->evaluate($this->reservedDates));
     }
 
-    public function reservedIcon(string|Closure $icon): static
+    public function reservedIcon(string|ScalableIcon|Closure $icon): static
     {
         $this->reservedIcon = $icon;
 
         return $this;
     }
 
-    public function getReservedIcon(): string
+    public function getReservedIcon(): string|ScalableIcon
     {
         $icon = $this->evaluate($this->reservedIcon);
 
-        return is_string($icon) && filled($icon) ? $icon : 'heroicon-m-bookmark';
+        if ($icon instanceof ScalableIcon) {
+            return $icon;
+        }
+
+        return is_string($icon) && filled($icon) ? $icon : Heroicon::Bookmark;
+    }
+
+    /**
+     * Tooltip for reserved days. Defaults to the translated "Reserved" label; pass an empty
+     * string to drop the tooltip while keeping the icon.
+     */
+    public function reservedTooltip(string|Closure|null $tooltip): static
+    {
+        $this->reservedTooltip = $tooltip;
+
+        return $this;
+    }
+
+    public function getReservedTooltip(): ?string
+    {
+        $tooltip = $this->evaluate($this->reservedTooltip);
+
+        if ($tooltip === null) {
+            return __('fila-calendar::calendar.reserved');
+        }
+
+        return filled($tooltip) ? $tooltip : null;
     }
 
     /**

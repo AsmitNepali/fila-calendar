@@ -152,7 +152,7 @@
                                 x-bind:disabled="day.placeholder || isInteractionBlocked(day.date)"
                                 x-bind:aria-hidden="day.placeholder ? 'true' : undefined"
                                 x-bind:tabindex="day.placeholder ? '-1' : undefined"
-                                x-bind:title="! day.placeholder && isReservedDate(day.date) ? @js(__('fila-calendar::calendar.reserved')) : null"
+                                x-bind:title="! day.placeholder && isReservedDate(day.date) ? @js($getReservedTooltip()) : null"
                                 x-on:click="! day.placeholder && selectDate(day.date, $event)"
                                 x-on:mouseenter="! day.placeholder && setHoveredDate(day.date)"
                             >
@@ -162,7 +162,7 @@
                                     <x-filament::icon
                                         :icon="$getReservedIcon()"
                                         class="fi-calendar-day__icon"
-                                        aria-label="{{ __('fila-calendar::calendar.reserved') }}"
+                                        aria-label="{{ $getReservedTooltip() ?? __('fila-calendar::calendar.reserved') }}"
                                     />
                                 </template>
                             </button>
