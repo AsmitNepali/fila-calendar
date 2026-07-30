@@ -7,10 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- Selected days, ranges, and the today ring were drawn in the package's own teal regardless of the host panel, so a calendar in an amber or rose panel showed a blue-green ring around the day it was told to select. Every colored state now resolves through the panel's `--primary-*` palette. Themes that already set the `--fi-fila-calendar-*` variables are unaffected, and those overrides no longer have to exist just to undo the teal.
-- The ring on the day awaiting a range's second click was a fixed teal on top of the range fill, which read as a stray blue border on any other palette. It now uses the day's own text color.
+## [0.5.0] - 2026-07-30
 
 ### Added
 
@@ -19,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - The fallback palette, used only when the calendar renders outside a Filament panel and has no `--primary-*` to read, is amber instead of teal, matching Filament's default primary color.
+
+### Fixed
+
+- Selected days, ranges, and the today ring were drawn in the package's own teal regardless of the host panel, so a calendar in an amber or rose panel showed a blue-green ring around the day it was told to select. Every colored state now resolves through the panel's `--primary-*` palette. Themes that already set the `--fi-fila-calendar-*` variables are unaffected, and those overrides no longer have to exist just to undo the teal.
+- The ring on the day awaiting a range's second click was a fixed teal on top of the range fill, which read as a stray blue border on any other palette. It now uses the day's own text color.
 
 ## [0.4.1] - 2026-07-30
 
@@ -125,7 +127,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-month grid with responsive columns, date constraints, and weekend blocking.
 - Nuxt documentation site with GitHub Pages deployment.
 
-[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/AsmitNepali/fila-calendar/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/AsmitNepali/fila-calendar/compare/v0.3.0...v0.3.1
