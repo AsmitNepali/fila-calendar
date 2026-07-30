@@ -1,6 +1,19 @@
+/* Internal palette. Every colored state resolves through these, so a calendar dropped into a
+   panel takes that panel's primary color instead of the package's own hue. Filament injects
+   --primary-* on :root; the amber literals are the standalone fallback, matching Filament's own
+   default primary. These are private — themes override the public --fi-fila-calendar-* variables,
+   which still win because the rules below read them first. */
 .fi-fila-calendar {
+    --fi-fila-calendar-primary: var(--primary-500, rgb(245 158 11));
+    --fi-fila-calendar-primary-soft: var(--primary-300, rgb(252 211 77));
+
     width: 100%;
     min-width: 0;
+}
+
+.dark .fi-fila-calendar {
+    --fi-fila-calendar-primary: var(--primary-500, rgb(251 191 36));
+    --fi-fila-calendar-primary-soft: var(--primary-200, rgb(253 230 138));
 }
 
 .fi-fila-calendar--readonly .fi-calendar-day {
@@ -253,11 +266,11 @@
 }
 
 .fi-calendar-day--today:not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end):not(.fi-calendar-day--in-range) {
-    box-shadow: inset 0 0 0 1px rgb(19 102 131);
+    box-shadow: inset 0 0 0 1px var(--fi-fila-calendar-primary);
 }
 
 .dark .fi-calendar-day--today:not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end):not(.fi-calendar-day--in-range) {
-    box-shadow: inset 0 0 0 1px rgb(125 211 252);
+    box-shadow: inset 0 0 0 1px var(--fi-fila-calendar-primary-soft);
 }
 
 /* Today is marked with a dot so it stays visible on top of any range color */
@@ -287,12 +300,12 @@
 
 .fi-calendar-day--selected,
 .fi-calendar-day--range-start {
-    background: var(--fi-fila-calendar-range-start-bg, rgb(19 102 131));
+    background: var(--fi-fila-calendar-range-start-bg, var(--fi-fila-calendar-primary));
     color: var(--fi-fila-calendar-range-start-color, white);
 }
 
 .fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
-    background: var(--fi-fila-calendar-range-end-bg, rgb(19 102 131));
+    background: var(--fi-fila-calendar-range-end-bg, var(--fi-fila-calendar-primary));
     color: var(--fi-fila-calendar-range-end-color, white);
 }
 
@@ -306,40 +319,42 @@
     border-bottom-left-radius: 0;
 }
 
+/* The day waiting for its second click already carries the range-start fill, so the ring is drawn
+   in the day's own text color. Any palette keeps it legible without a second color to tune. */
 .fi-calendar-day--range-pending {
-    box-shadow: inset 0 0 0 2px rgb(13 148 136);
+    box-shadow: inset 0 0 0 2px var(--fi-fila-calendar-range-pending-ring, currentColor);
 }
 
 .dark .fi-calendar-day--selected,
 .dark .fi-calendar-day--range-start {
-    background: var(--fi-fila-calendar-range-start-bg, rgb(24 116 144));
+    background: var(--fi-fila-calendar-range-start-bg, var(--fi-fila-calendar-primary));
     color: var(--fi-fila-calendar-range-start-color, white);
 }
 
 .dark .fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
-    background: var(--fi-fila-calendar-range-end-bg, rgb(24 116 144));
+    background: var(--fi-fila-calendar-range-end-bg, var(--fi-fila-calendar-primary));
     color: var(--fi-fila-calendar-range-end-color, white);
 }
 
 .fi-calendar-day--in-range {
     border-radius: 0;
-    background: var(--fi-fila-calendar-range-middle-bg, rgb(19 102 131 / 0.18));
-    color: var(--fi-fila-calendar-range-middle-color, rgb(19 102 131));
+    background: var(--fi-fila-calendar-range-middle-bg, color-mix(in oklab, var(--fi-fila-calendar-primary) 18%, transparent));
+    color: var(--fi-fila-calendar-range-middle-color, var(--fi-fila-calendar-primary));
 }
 
 .dark .fi-calendar-day--in-range {
-    background: var(--fi-fila-calendar-range-middle-bg, rgb(24 116 144 / 0.28));
-    color: var(--fi-fila-calendar-range-middle-color, rgb(186 230 253));
+    background: var(--fi-fila-calendar-range-middle-bg, color-mix(in oklab, var(--fi-fila-calendar-primary) 28%, transparent));
+    color: var(--fi-fila-calendar-range-middle-color, var(--fi-fila-calendar-primary-soft));
 }
 
 .fi-calendar-day--in-range:hover:not(:disabled) {
-    background: var(--fi-fila-calendar-range-middle-hover-bg, rgb(19 102 131 / 0.28));
-    color: var(--fi-fila-calendar-range-middle-hover-text, var(--fi-fila-calendar-range-middle-color, rgb(19 102 131)));
+    background: var(--fi-fila-calendar-range-middle-hover-bg, color-mix(in oklab, var(--fi-fila-calendar-primary) 28%, transparent));
+    color: var(--fi-fila-calendar-range-middle-hover-text, var(--fi-fila-calendar-range-middle-color, var(--fi-fila-calendar-primary)));
 }
 
 .dark .fi-calendar-day--in-range:hover:not(:disabled) {
-    background: var(--fi-fila-calendar-range-middle-hover-bg, rgb(24 116 144 / 0.38));
-    color: var(--fi-fila-calendar-range-middle-hover-text, var(--fi-fila-calendar-range-middle-color, rgb(186 230 253)));
+    background: var(--fi-fila-calendar-range-middle-hover-bg, color-mix(in oklab, var(--fi-fila-calendar-primary) 38%, transparent));
+    color: var(--fi-fila-calendar-range-middle-hover-text, var(--fi-fila-calendar-range-middle-color, var(--fi-fila-calendar-primary-soft)));
 }
 
 .fi-calendar-day--in-range-hover {
@@ -409,7 +424,7 @@
    Ring and marker follow the panel's primary color, overridable per theme with
    --fi-fila-calendar-reserved-color. */
 .fi-fila-calendar .fi-calendar-day--reserved:not(.fi-calendar-day--selected):not(.fi-calendar-day--range-start):not(.fi-calendar-day--range-end):not(.fi-calendar-day--in-range) {
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fi-fila-calendar-reserved-color, var(--primary-500, rgb(19 102 131))) 45%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fi-fila-calendar-reserved-color, var(--fi-fila-calendar-primary)) 45%, transparent);
 }
 
 /* Corner marker, kept small so it annotates the day rather than competing with the number.
@@ -420,7 +435,7 @@
     right: 0.3rem;
     width: 0.625rem;
     height: 0.625rem;
-    color: var(--fi-fila-calendar-reserved-color, var(--primary-500, rgb(19 102 131)));
+    color: var(--fi-fila-calendar-reserved-color, var(--fi-fila-calendar-primary));
     pointer-events: none;
 }
 
@@ -467,8 +482,8 @@
 .fi-calendar-day--unavailable.fi-calendar-day--in-range:hover,
 .fi-calendar-day--week-end.fi-calendar-day--in-range,
 .fi-calendar-day--week-end.fi-calendar-day--in-range:hover {
-    background: var(--fi-fila-calendar-range-middle-bg, rgb(19 102 131 / 0.18));
-    color: var(--fi-fila-calendar-range-middle-color, rgb(19 102 131));
+    background: var(--fi-fila-calendar-range-middle-bg, color-mix(in oklab, var(--fi-fila-calendar-primary) 18%, transparent));
+    color: var(--fi-fila-calendar-range-middle-color, var(--fi-fila-calendar-primary));
     opacity: 1;
 }
 
@@ -476,8 +491,8 @@
 .dark .fi-calendar-day--unavailable.fi-calendar-day--in-range:hover,
 .dark .fi-calendar-day--week-end.fi-calendar-day--in-range,
 .dark .fi-calendar-day--week-end.fi-calendar-day--in-range:hover {
-    background: var(--fi-fila-calendar-range-middle-bg, rgb(24 116 144 / 0.28));
-    color: var(--fi-fila-calendar-range-middle-color, rgb(186 230 253));
+    background: var(--fi-fila-calendar-range-middle-bg, color-mix(in oklab, var(--fi-fila-calendar-primary) 28%, transparent));
+    color: var(--fi-fila-calendar-range-middle-color, var(--fi-fila-calendar-primary-soft));
 }
 
 .fi-calendar-day--unavailable.fi-calendar-day--in-range .fi-calendar-day__number::before,
@@ -493,7 +508,7 @@
 .fi-calendar-day--unavailable.fi-calendar-day--selected,
 .fi-calendar-day--week-end.fi-calendar-day--range-start,
 .fi-calendar-day--week-end.fi-calendar-day--selected {
-    background: var(--fi-fila-calendar-range-start-bg, rgb(19 102 131));
+    background: var(--fi-fila-calendar-range-start-bg, var(--fi-fila-calendar-primary));
     color: var(--fi-fila-calendar-range-start-color, white);
 }
 
@@ -501,19 +516,19 @@
 .dark .fi-calendar-day--unavailable.fi-calendar-day--selected,
 .dark .fi-calendar-day--week-end.fi-calendar-day--range-start,
 .dark .fi-calendar-day--week-end.fi-calendar-day--selected {
-    background: var(--fi-fila-calendar-range-start-bg, rgb(24 116 144));
+    background: var(--fi-fila-calendar-range-start-bg, var(--fi-fila-calendar-primary));
     color: var(--fi-fila-calendar-range-start-color, white);
 }
 
 .fi-calendar-day--unavailable.fi-calendar-day--range-end:not(.fi-calendar-day--range-start),
 .fi-calendar-day--week-end.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
-    background: var(--fi-fila-calendar-range-end-bg, rgb(19 102 131));
+    background: var(--fi-fila-calendar-range-end-bg, var(--fi-fila-calendar-primary));
     color: var(--fi-fila-calendar-range-end-color, white);
 }
 
 .dark .fi-calendar-day--unavailable.fi-calendar-day--range-end:not(.fi-calendar-day--range-start),
 .dark .fi-calendar-day--week-end.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
-    background: var(--fi-fila-calendar-range-end-bg, rgb(24 116 144));
+    background: var(--fi-fila-calendar-range-end-bg, var(--fi-fila-calendar-primary));
     color: var(--fi-fila-calendar-range-end-color, white);
 }
 
@@ -550,36 +565,36 @@
 .fi-calendar-day--disabled.fi-calendar-day--range-start,
 .fi-calendar-day--disabled.fi-calendar-day--selected {
     opacity: 1;
-    background: color-mix(in srgb, var(--fi-fila-calendar-range-start-bg, rgb(19 102 131)) 45%, transparent);
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-start-bg, var(--fi-fila-calendar-primary)) 45%, transparent);
     color: var(--fi-fila-calendar-range-start-color, white);
 }
 
 .dark .fi-calendar-day--disabled.fi-calendar-day--range-start,
 .dark .fi-calendar-day--disabled.fi-calendar-day--selected {
-    background: color-mix(in srgb, var(--fi-fila-calendar-range-start-bg, rgb(24 116 144)) 45%, transparent);
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-start-bg, var(--fi-fila-calendar-primary)) 45%, transparent);
     color: var(--fi-fila-calendar-range-start-color, white);
 }
 
 .fi-calendar-day--disabled.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
     opacity: 1;
-    background: color-mix(in srgb, var(--fi-fila-calendar-range-end-bg, rgb(19 102 131)) 45%, transparent);
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-end-bg, var(--fi-fila-calendar-primary)) 45%, transparent);
     color: var(--fi-fila-calendar-range-end-color, white);
 }
 
 .dark .fi-calendar-day--disabled.fi-calendar-day--range-end:not(.fi-calendar-day--range-start) {
-    background: color-mix(in srgb, var(--fi-fila-calendar-range-end-bg, rgb(24 116 144)) 45%, transparent);
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-end-bg, var(--fi-fila-calendar-primary)) 45%, transparent);
     color: var(--fi-fila-calendar-range-end-color, white);
 }
 
 .fi-calendar-day--disabled.fi-calendar-day--in-range {
     opacity: 1;
-    background: color-mix(in srgb, var(--fi-fila-calendar-range-middle-bg, rgb(19 102 131 / 0.18)) 45%, transparent);
-    color: var(--fi-fila-calendar-range-middle-color, rgb(19 102 131));
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-middle-bg, color-mix(in oklab, var(--fi-fila-calendar-primary) 18%, transparent)) 45%, transparent);
+    color: var(--fi-fila-calendar-range-middle-color, var(--fi-fila-calendar-primary));
 }
 
 .dark .fi-calendar-day--disabled.fi-calendar-day--in-range {
-    background: color-mix(in srgb, var(--fi-fila-calendar-range-middle-bg, rgb(24 116 144 / 0.28)) 45%, transparent);
-    color: var(--fi-fila-calendar-range-middle-color, rgb(186 230 253));
+    background: color-mix(in srgb, var(--fi-fila-calendar-range-middle-bg, color-mix(in oklab, var(--fi-fila-calendar-primary) 28%, transparent)) 45%, transparent);
+    color: var(--fi-fila-calendar-range-middle-color, var(--fi-fila-calendar-primary-soft));
 }
 
 .fi-modal .fi-fila-calendar__months {
