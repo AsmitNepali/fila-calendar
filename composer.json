@@ -21,6 +21,10 @@
             "Asmit\\FilaCalendar\\": "src/"
         }
     },
+    "scripts": {
+        "test": "pest",
+        "test:js": "node resources/js/fila-calendar.test.mjs"
+    },
     "extra": {
         "laravel": {
             "providers": [
@@ -32,5 +36,13 @@
         "symlink": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require-dev": {
+        "pestphp/pest": "^3.0|^4.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
 }
