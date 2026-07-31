@@ -10,6 +10,13 @@ This package lives inside a Laravel application. After cloning the repository:
 composer install
 ```
 
+To run the tests:
+
+```bash
+composer test     # Pest, PHP
+composer test:js  # node, the Alpine calendar
+```
+
 To work on the documentation site:
 
 ```bash
@@ -22,7 +29,7 @@ npm run dev
 
 1. Fork the repository and create a branch from `main`.
 2. Make focused changes with clear commit messages.
-3. Run formatting and tests in the parent Laravel app when your change affects PHP code.
+3. Run `composer test` when your change affects PHP code, and `composer test:js` when it touches `resources/js`.
 4. Open a pull request with a short summary of the change and why it is needed.
 
 ## Reporting issues

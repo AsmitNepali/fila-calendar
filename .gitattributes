@@ -7,6 +7,8 @@
 /CHANGELOG.md       export-ignore
 /CONTRIBUTING.md    export-ignore
 /SECURITY.md        export-ignore
+/phpunit.xml        export-ignore
+/tests              export-ignore
 
 *.md                diff=markdown
 *.php               diff=php
