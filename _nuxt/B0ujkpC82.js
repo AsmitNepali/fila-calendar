@@ -1,0 +1,1 @@
+import{t as e}from"./B_p739V1.js";var t=()=>e(`color-mode`).value;export{t};
