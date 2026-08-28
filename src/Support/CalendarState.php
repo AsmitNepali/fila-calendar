@@ -73,7 +73,7 @@ class CalendarState
         }
 
         if ($mode === CalendarMode::Multiple || $multiple) {
-            if (! is_array($state)) {
+            if (! is_array($state) || DateRanges::isRangeList($state)) {
                 return [];
             }
 

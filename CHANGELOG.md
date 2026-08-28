@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A PHP test suite. `composer test` runs Pest over `CalendarState`'s hydration and dehydration across all four modes; `composer test:js` runs the existing calendar test. Both now run in CI on PHP 8.2, 8.3 and 8.4.
+
+### Fixed
+
+- Dehydrating range-shaped state in `multiple` mode produced the literal string `"Array"` instead of a date. Hydration already rejected that shape; dehydration now does too, so the mismatch yields an empty selection rather than a corrupt one.
+
 ## [0.5.0] - 2026-07-30
 
 ### Added
