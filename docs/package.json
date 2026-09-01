@@ -22,7 +22,7 @@
     "minimark": "^1.0.0",
     "nuxt": "^4.5.1",
     "nuxt-llms": "0.2.0",
-    "nuxt-og-image": "^6.7.2",
+    "nuxt-og-image": "^6.7.8",
     "tailwindcss": "^4.3.2",
     "ufo": "^1.6.4",
     "unist-util-visit": "^5.1.0",
