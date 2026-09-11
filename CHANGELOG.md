@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-11
+
+### Added
+
+- UI translations for Arabic, Azerbaijani, German, Spanish, Persian, French, Italian, Japanese, Korean, Dutch, Polish, Portuguese, Brazilian Portuguese, Russian, Turkish, Ukrainian, and Simplified Chinese. Filament panel locales `zh_CN` and `pt_BR` are included alongside `zh` and `pt`.
+
 ## [0.5.0] - 2026-07-30
 
 ### Added
@@ -127,7 +133,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-month grid with responsive columns, date constraints, and weekend blocking.
 - Nuxt documentation site with GitHub Pages deployment.
 
-[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.5.0...v1.0.0
 [0.5.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/AsmitNepali/fila-calendar/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.3.1...v0.4.0
