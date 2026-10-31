@@ -291,3 +291,28 @@ const multiRange = (state = []) => filaCalendar({ mode: 'multi-range', state })
 }
 
 console.log('ok')
+
+// A lone first click in range mode is a fully rounded pill, even while hovering, until the second click.
+{
+    const classesFor = (calendar, date) => calendar.dayClasses({ date, day: Number(date.slice(-2)), currentMonth: true, placeholder: false })
+
+    for (const calendar of [filaCalendar({ mode: 'range', state: null }), multiRange()]) {
+        calendar.selectDate('2026-08-10')
+
+        let classes = classesFor(calendar, '2026-08-10')
+        assert.ok(classes.includes('fi-calendar-day--selected'))
+        assert.ok(classes.includes('fi-calendar-day--range-pending'))
+        assert.ok(! classes.includes('fi-calendar-day--range-start'))
+        assert.ok(! classes.includes('fi-calendar-day--range-end'))
+
+        calendar.setHoveredDate('2026-08-14')
+        classes = classesFor(calendar, '2026-08-10')
+        assert.ok(! classes.includes('fi-calendar-day--range-start'))
+        assert.ok(! classes.includes('fi-calendar-day--range-end'))
+
+        calendar.clearHoveredDate()
+        calendar.selectDate('2026-08-14')
+        assert.ok(classesFor(calendar, '2026-08-10').includes('fi-calendar-day--range-start'))
+        assert.ok(classesFor(calendar, '2026-08-14').includes('fi-calendar-day--range-end'))
+    }
+}

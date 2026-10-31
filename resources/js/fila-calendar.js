@@ -547,8 +547,9 @@ export default function filaCalendar(config) {
 
             const role = this.getRangeRole(day.date)
 
+            // A lone first click stays a fully rounded pill until the second click closes the range.
             if (role === 'pending-start') {
-                classes.push('fi-calendar-day--range-start', 'fi-calendar-day--range-pending', 'fi-calendar-day--selected')
+                classes.push('fi-calendar-day--range-pending', 'fi-calendar-day--selected')
             }
 
             if (role === 'start' || role === 'start-end') {
