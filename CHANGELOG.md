@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-31
+
+### Changed
+
+- In `range` and `multi-range` modes the first clicked day is now a fully rounded pill, like a single selected day, instead of an open-ended range start. It takes the range-start shape only once the second click closes the range.
+
 ## [1.0.0] - 2026-09-11
 
 ### Added
@@ -133,7 +139,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Multi-month grid with responsive columns, date constraints, and weekend blocking.
 - Nuxt documentation site with GitHub Pages deployment.
 
-[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/AsmitNepali/fila-calendar/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/AsmitNepali/fila-calendar/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.5.0...v1.0.0
 [0.5.0]: https://github.com/AsmitNepali/fila-calendar/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/AsmitNepali/fila-calendar/compare/v0.4.0...v0.4.1
